@@ -1,0 +1,18 @@
+query Hello {
+  getHello
+}
+
+query IssueAccessToken($input: IssueAccessTokenInput!) {
+  issueAccessToken(input: $input)
+}
+
+mutation RegisterUser($input: RegisterUserInput!) {
+  register(input: $input)
+}
+
+mutation LoginUser($input: LoginUserInput!) {
+  login(input: $input) {
+    accessToken
+    refreshToken
+  }
+}

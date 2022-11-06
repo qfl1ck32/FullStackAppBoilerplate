@@ -1,0 +1,49 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  firstName: String!
+  lastName: String!
+  username: String!
+  email: String!
+  roles: [Role!]!
+}
+
+enum Role {
+  END_USER
+  ADMIN
+}
+
+type LoginUserResponse {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type Query {
+  getHello: String!
+  hi: User!
+  issueAccessToken(input: IssueAccessTokenInput!): String!
+}
+
+input IssueAccessTokenInput {
+  refreshToken: String!
+}
+
+type Mutation {
+  register(input: RegisterUserInput!): Boolean!
+  login(input: LoginUserInput!): LoginUserResponse!
+}
+
+input RegisterUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  username: String
+  password: String!
+}
+
+input LoginUserInput {
+  usernameOrEmail: String!
+  password: String!
+}
