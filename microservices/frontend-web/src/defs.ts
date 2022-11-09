@@ -1,6 +1,6 @@
-import "graphql/error";
+import 'graphql/error';
 
-declare module "graphql/error" {
+declare module 'graphql/error' {
   export class GraphQLError {
     code: string;
   }

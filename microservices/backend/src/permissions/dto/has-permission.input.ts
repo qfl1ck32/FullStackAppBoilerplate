@@ -1,4 +1,4 @@
-import { ObjectId } from '@root/database/database.types';
+import { ObjectId } from '@root/database/defs';
 
 export class HasPermissionInput {
   permission: string | string[];

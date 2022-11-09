@@ -1,22 +1,35 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ObjectId } from '@root/database/database.types';
+import { Prop, Schema } from '@nestjs/mongoose';
+
+import {
+  Blameable,
+  Timestampable,
+  WithBehaviours,
+} from '@root/database/collections/collection.behaviours';
+import { Collection } from '@root/database/collections/collection.class';
+import { ObjectId } from '@root/database/defs';
 import { Role } from '@root/roles/roles.enum';
+
 import { Document } from 'mongoose';
+import { Mixin } from 'ts-mixer';
 
 export type UserDocument = User & Document<ObjectId>;
+
+export type UsersCollection = Collection<User>;
 
 export class UserPassword {
   hash: string;
 
   isEnabled: boolean;
 
-  hasEmailVerified: boolean;
+  requiresEmailValidation: boolean;
+
+  emailVerificationToken?: string;
 }
 
 @ObjectType()
 @Schema()
-export class User {
+export class User extends WithBehaviours(Blameable, Timestampable) {
   @Field(() => String)
   @Prop()
   firstName: string;
@@ -34,13 +47,12 @@ export class User {
   email: string;
 
   @Field(() => [Role])
-  @Prop()
   roles: Role[];
 
   @Prop()
   password: UserPassword;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
-
 registerEnumType(Role, { name: 'Role' });
+
+const x = new User();

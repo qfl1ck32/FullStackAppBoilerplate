@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { AuthModule } from '@root/auth/auth.module';
 import { AuthService } from '@root/auth/auth.service';
 import { RegisterUserInput } from '@root/auth/dto/register.input';
+
 import { UsersModule } from './users.module';
 import { UsersResolver } from './users.resolver';
 

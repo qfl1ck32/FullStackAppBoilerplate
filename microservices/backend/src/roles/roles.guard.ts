@@ -1,13 +1,15 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { RequestJwtType } from '@root/auth/auth.middleware';
-import { JWTRefreshTokenAuthPayload } from '@root/auth/types/jwt-payload.type';
+
+import { GQLContext } from '@root/graphql/defs';
 import { PermissionsService } from '@root/permissions/permissions.service';
-import { Observable } from 'rxjs';
+
 import { UserNotAuthorizedException } from './exceptions/UserNotAuthorized.exception';
+
 import { ROLES_KEY } from './roles.decorator';
 import { Domain, Role } from './roles.enum';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -24,14 +26,22 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    const gqlContext = GqlExecutionContext.create(context).getContext();
+    // TODO: type for getContext() return
+    const gqlContext =
+      GqlExecutionContext.create(context).getContext<GQLContext>();
 
     const request = gqlContext.req;
 
-    const jwt = request.jwt as RequestJwtType | undefined;
+    const { jwt } = request;
 
-    if (jwt.error && requiredRoles?.length) {
-      throw jwt.error;
+    if (requiredRoles?.length) {
+      if (!jwt) {
+        throw new UserNotAuthorizedException();
+      }
+
+      if (jwt.error) {
+        throw jwt.error;
+      }
     }
 
     const { userId } = jwt.payload;

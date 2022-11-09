@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ObjectId } from '@root/database/database.types';
+
+import { ObjectId } from '@root/database/defs';
+
 import mongoose, { Document } from 'mongoose';
 
 export type PermissionDocument = Permission & Document<ObjectId>;

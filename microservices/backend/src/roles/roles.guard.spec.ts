@@ -1,15 +1,16 @@
 import { ExecutionContext, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { TestingModule, Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { DatabaseModule } from '@root/database/database.module';
 import { PermissionsModule } from '@root/permissions/permissions.module';
 import { PermissionsService } from '@root/permissions/permissions.service';
+import { UsersModule } from '@root/users/users.module';
+
 import { RequireRoles } from './roles.decorator';
 import { Role } from './roles.enum';
 import { RolesGuard } from './roles.guard';
-
 import { createMock } from '@golevelup/ts-jest';
-import { UsersModule } from '@root/users/users.module';
 
 // Todo: think how to test?
 describe('RolesGuard', () => {

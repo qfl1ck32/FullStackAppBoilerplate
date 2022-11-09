@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
-
-import { JwtService } from '@nestjs/jwt';
-import { TokenExpiredError } from 'jsonwebtoken';
-import { LoginUserInput, LoginUserResponse } from './dto/login.input';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
+import { ConfigKey } from '@root/config/configuration';
+import { ObjectId } from '@root/database/defs';
+import { PermissionsService } from '@root/permissions/permissions.service';
+import { Domain, Role } from '@root/roles/roles.enum';
+import { UsersSecurityService } from '@root/users-security/users-security.service';
+import { UsersService } from '@root/users/users.service';
+
+import { IssueAccessTokenInput } from './dto/issueAccessToken.input';
+import { LoginUserInput, LoginUserResponse } from './dto/login.input';
 import { RegisterUserInput } from './dto/register.input';
+
+import { ExpiredJwtException } from './exceptions/ExpiredJwt.exception';
+import { InvalidJwtException } from './exceptions/InvalidJwt.exception';
+import { UserNotFoundException } from './exceptions/UserNotFound.exception';
+import { WrongPasswordException } from './exceptions/WrongPassword.exception';
+
 import {
   JWTAccessTokenAuthPayload,
   JWTRefreshTokenAuthPayload,
   JWTTokenType,
 } from './types/jwt-payload.type';
-import { UserNotFoundException } from './exceptions/UserNotFound.exception';
-import { WrongPasswordException } from './exceptions/WrongPassword.exception';
-import { Domain, Role } from '@root/roles/roles.enum';
-import { Env } from '@root/config/configuration';
-import { PermissionsService } from '@root/permissions/permissions.service';
-import { UsersService } from '@root/users/users.service';
-import { UsersSecurityService } from '@root/users-security/users-security.service';
-import { ObjectId } from '@root/database/database.types';
-import { IssueAccessTokenInput } from './dto/issueAccessToken.input';
-import { InvalidJwtException } from './exceptions/InvalidJwt.exception';
-import { ExpiredJwtException } from './exceptions/ExpiredJwt.exception';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -35,18 +37,16 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly permissionService: PermissionsService,
   ) {
-    this.accessTokenExpiry = '2 minutes';
+    this.accessTokenExpiry = '30 minutes';
     this.refreshTokenExpiry = '2 hours';
   }
 
   async register(input: RegisterUserInput) {
-    const user = await this.usersService.create({
+    const userId = await this.usersService.create({
       ...input,
 
       requiresEmailValidation: true,
     });
-
-    const { _id: userId } = user;
 
     await this.permissionService.add({
       permission: Role.END_USER,
@@ -89,7 +89,7 @@ export class AuthService {
   public async issueAccessToken(input: IssueAccessTokenInput) {
     const { refreshToken } = input;
 
-    const secret = this.configService.get(Env.JWT_SECRET);
+    const secret = this.configService.get(ConfigKey.JWT_SECRET);
 
     try {
       const payload = this.jwtService.verify<JWTRefreshTokenAuthPayload>(
@@ -115,13 +115,13 @@ export class AuthService {
     }
   }
 
-  private async generateAccessToken(userId: ObjectId) {
+  public async generateAccessToken(userId: ObjectId) {
     const payload = {
       userId,
       type: JWTTokenType.ACCESS,
     } as JWTAccessTokenAuthPayload;
 
-    const secret = this.configService.get(Env.JWT_SECRET);
+    const secret = this.configService.get(ConfigKey.JWT_SECRET);
 
     return this.jwtService.sign(payload, {
       secret,
@@ -129,13 +129,13 @@ export class AuthService {
     });
   }
 
-  private async generateRefreshToken(userId: ObjectId) {
+  public async generateRefreshToken(userId: ObjectId) {
     const payload = {
       userId,
       type: JWTTokenType.REFRESH,
     } as JWTRefreshTokenAuthPayload;
 
-    const secret = this.configService.get(Env.JWT_SECRET);
+    const secret = this.configService.get(ConfigKey.JWT_SECRET);
 
     return this.jwtService.sign(payload, {
       secret,

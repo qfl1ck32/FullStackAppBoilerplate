@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { fstat, readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 import { glob } from "glob";
 
 const getCode = (className: string) => {

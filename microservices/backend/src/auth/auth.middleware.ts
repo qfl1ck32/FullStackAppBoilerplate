@@ -1,15 +1,17 @@
-import { Env } from '@root/config/configuration';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { TokenExpiredError } from 'jsonwebtoken';
-import { AuthService } from './auth.service';
+
+import { ConfigKey } from '@root/config/configuration';
+import { UserNotAuthorizedException } from '@root/roles/exceptions/UserNotAuthorized.exception';
+
 import { ExpiredJwtException } from './exceptions/ExpiredJwt.exception';
 import { InvalidJwtException } from './exceptions/InvalidJwt.exception';
-import {
-  JWTAccessTokenAuthPayload,
-  JWTRefreshTokenAuthPayload,
-} from './types/jwt-payload.type';
+
+import { AuthService } from './auth.service';
+import { JWTAccessTokenAuthPayload } from './types/jwt-payload.type';
+import { Request } from 'express';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 export type RequestJwtType = {
   payload: JWTAccessTokenAuthPayload;
@@ -24,14 +26,21 @@ export class AuthMiddleware implements NestMiddleware {
     private readonly configService: ConfigService,
   ) {}
 
-  async use(req: any, res: any, next: () => void) {
+  async use(req: Request, _: any, next: () => void) {
     const authorizationHeader = req.headers['authorization'];
 
-    if (!authorizationHeader) return next();
+    if (!authorizationHeader) {
+      req.jwt = {
+        payload: null,
+        error: new UserNotAuthorizedException(),
+      };
+
+      return next();
+    }
 
     const accessToken = authorizationHeader.split(' ')[1]; // Bearer ...
 
-    const secret = this.configService.get(Env.JWT_SECRET);
+    const secret = this.configService.get(ConfigKey.JWT_SECRET);
 
     try {
       const payload =

@@ -1,11 +1,14 @@
-import * as path from 'path';
-
-import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule as GQLModule } from '@nestjs/graphql';
-import { GraphQLError } from 'graphql';
+
+import { ObjectId } from '@root/database/defs';
 import { Exception } from '@root/exceptions/exception';
 import { UsersModule } from '@root/users/users.module';
+
+import { GQLContext } from './defs';
+import { GraphQLError } from 'graphql';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -15,6 +18,23 @@ import { UsersModule } from '@root/users/users.module';
       driver: ApolloDriver,
       debug: false,
       playground: true,
+
+      // TODO: types + transformer of some kind?
+      context: (ctx: GQLContext) => {
+        const { jwt } = ctx.req;
+
+        let userId: ObjectId | null;
+
+        if (jwt?.payload) {
+          userId = new ObjectId(jwt.payload.userId);
+        }
+
+        return {
+          ...ctx,
+
+          userId,
+        } as GQLContext;
+      },
 
       formatError(error: GraphQLError) {
         if (!(error.originalError instanceof Exception)) return error;

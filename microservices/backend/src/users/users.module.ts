@@ -1,27 +1,32 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersResolver } from './users.resolver';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './entities/user.entity';
+import { ConfigService } from '@nestjs/config';
+
+import { CollectionProvider } from '@root/database/collections/collection.class';
+import { DatabaseService } from '@root/database/database.service';
+import { EmailService } from '@root/email/email.service';
+import { EventManagerModule } from '@root/event-manager/event-manager.module';
 import { PermissionsModule } from '@root/permissions/permissions.module';
+import { RouterService } from '@root/router/router.service';
 import { UsersSecurityService } from '@root/users-security/users-security.service';
-import { DatabaseModule } from '@root/database/database.module';
+
+import { User } from './entities/user.entity';
+
+import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service';
 
 @Module({
-  imports: [
-    DatabaseModule,
+  imports: [PermissionsModule, EventManagerModule],
 
-    MongooseModule.forFeature([
-      {
-        name: User.name,
-        schema: UserSchema,
-      },
-    ]),
-
-    PermissionsModule,
+  providers: [
+    UsersResolver,
+    UsersService,
+    UsersSecurityService,
+    EmailService,
+    ConfigService,
+    RouterService,
+    DatabaseService,
+    CollectionProvider(User),
   ],
-
-  providers: [UsersResolver, UsersService, UsersSecurityService],
 
   exports: [UsersService, UsersSecurityService],
 })

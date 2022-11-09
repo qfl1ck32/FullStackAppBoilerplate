@@ -1,6 +1,11 @@
-import { setAccessToken, setRefreshToken } from "@root/auth/auth";
-import { LoginUserInput, LoginUserResponse, useLoginUserMutation } from "@root/gql/operations";
-import { useState } from "react";
+import { useState } from 'react';
+
+import { setAccessToken, setRefreshToken } from '@root/auth/auth';
+import {
+  LoginUserInput,
+  LoginUserResponse,
+  useLoginUserMutation,
+} from '@root/gql/operations';
 
 export const useAuthorization = () => {
   const [loginMutation] = useLoginUserMutation();

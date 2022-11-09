@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersModule } from '@root/users/users.module';
+
 import { UsersSecurityService } from './users-security.service';
 
 describe('UsersSecurityService', () => {

@@ -31,8 +31,6 @@ export const Test = () => {
     });
   };
 
-  console.log({ isLoggingIn, loginError });
-
   useEffect(() => {
     if (t === 0) return;
 

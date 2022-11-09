@@ -7,7 +7,6 @@
  *
  * @format
  */
-
 import React, {type PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -18,7 +17,6 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-
 import {
   Colors,
   DebugInstructions,

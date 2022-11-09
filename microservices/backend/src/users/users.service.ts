@@ -1,18 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+
+import { InjectCollection } from '@root/database/database.decorators';
+import { ObjectId } from '@root/database/defs';
 import { UsersSecurityService } from '@root/users-security/users-security.service';
-import { Model } from 'mongoose';
+
 import { CreateUserInput } from './dto/create.input';
-import { User, UserDocument } from './entities/user.entity';
+
+import { User, UsersCollection } from './entities/user.entity';
 
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
 @Injectable()
 export class UsersService {
+  public emailVerificationTokenLength: number;
+
   constructor(
-    @InjectModel(User.name) public userModel: Model<UserDocument>,
-    public readonly security: UsersSecurityService,
-  ) {}
+    @InjectCollection(User) private readonly collection: UsersCollection,
+    private readonly security: UsersSecurityService,
+  ) {
+    this.emailVerificationTokenLength = 16;
+  }
 
   async create(input: CreateUserInput) {
     const {
@@ -24,7 +31,22 @@ export class UsersService {
       requiresEmailValidation,
     } = input;
 
-    const user = await this.userModel.findOne({
+    const { insertedId } = await this.collection.insertOne(
+      {
+        firstName: 'a',
+      } as any,
+      {
+        context: {
+          userId: new ObjectId('aaaaaaaaaaaa'),
+        },
+      },
+    );
+
+    return insertedId;
+
+    throw new Error('Bee');
+
+    const user = await this.collection.findOne({
       $or: [
         {
           username,
@@ -41,27 +63,27 @@ export class UsersService {
 
     const hash = this.security.hashPassword(password);
 
-    const newUser = await new this.userModel({
-      firstName,
-      lastName,
+    // const newUser = await this.collection.insertOne({
+    //   firstName,
+    //   lastName,
 
-      email,
-      username,
+    //   email,
+    //   username,
 
-      password: {
-        hash,
+    //   password: {
+    //     hash,
 
-        isEnabled: !requiresEmailValidation,
+    //     isEnabled: !requiresEmailValidation,
 
-        hasEmailVerified: requiresEmailValidation ? false : undefined,
-      },
-    }).save();
+    //     requiresEmailValidation,
+    //   },
+    // });
 
-    return newUser;
+    // return newUser;
   }
 
   async findByUsernameOrEmail(usernameOrEmail: string) {
-    return this.userModel.findOne({
+    return this.collection.findOne({
       $or: [
         {
           username: usernameOrEmail,

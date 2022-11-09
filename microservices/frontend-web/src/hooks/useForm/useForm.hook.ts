@@ -1,11 +1,19 @@
-import { useForm as baseUseForm, FieldValues, UseFormProps as BaseUseFormProps } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  UseFormProps as BaseUseFormProps,
+  FieldValues,
+  useForm as baseUseForm,
+} from 'react-hook-form';
 
-export interface UseFormProps<TFieldValues extends FieldValues, TContext = any> extends Omit<BaseUseFormProps<TFieldValues, TContext>, "resolver"> {
+export interface UseFormProps<TFieldValues extends FieldValues, TContext = any>
+  extends Omit<BaseUseFormProps<TFieldValues, TContext>, 'resolver'> {
   schema: any;
 }
 
-export function useForm<TFieldValues extends FieldValues = FieldValues, TContext = any>(props: UseFormProps<TFieldValues, TContext>) {
+export function useForm<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+>(props: UseFormProps<TFieldValues, TContext>) {
   const { schema, ...rest } = props;
 
   return baseUseForm({

@@ -1,24 +1,28 @@
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Env } from '@root/config/configuration';
+
+import { ConfigKey } from '@root/config/configuration';
 import { Permission } from '@root/permissions/entities/permission.entity';
 import { PermissionsService } from '@root/permissions/permissions.service';
 import { Domain, Role } from '@root/roles/roles.enum';
-import { registerUserTestInput } from '@test/utils/inputs';
-import { AuthModule } from './auth.module';
-import { AuthService } from './auth.service';
+
 import { LoginUserInput } from './dto/login.input';
 import { RegisterUserInput } from './dto/register.input';
+
 import { ExpiredJwtException } from './exceptions/ExpiredJwt.exception';
 import { InvalidJwtException } from './exceptions/InvalidJwt.exception';
 import { UserNotFoundException } from './exceptions/UserNotFound.exception';
 import { WrongPasswordException } from './exceptions/WrongPassword.exception';
+
+import { AuthModule } from './auth.module';
+import { AuthService } from './auth.service';
 import {
   JWTAccessTokenAuthPayload,
   JWTRefreshTokenAuthPayload,
   JWTTokenType,
 } from './types/jwt-payload.type';
+import { registerUserTestInput } from '@test/utils/inputs';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -89,7 +93,7 @@ describe('AuthService', () => {
 
     expect(refreshToken).toBeTruthy();
 
-    const secret = configService.get(Env.JWT_SECRET);
+    const secret = configService.get(ConfigKey.JWT_SECRET);
 
     const accessTokenPayload = jwtService.verify<JWTAccessTokenAuthPayload>(
       accessToken,
@@ -132,7 +136,7 @@ describe('AuthService', () => {
       service.issueAccessToken({ refreshToken: accessToken }),
     ).rejects.toThrow(new InvalidJwtException());
 
-    const secret = configService.get(Env.JWT_SECRET);
+    const secret = configService.get(ConfigKey.JWT_SECRET);
 
     const expiredToken = jwtService.sign({}, { secret, expiresIn: '1 second' });
 
@@ -147,23 +151,38 @@ describe('AuthService', () => {
     expect(issuedAccessToken).toBeTruthy();
   });
 
-  test('generateAccessTokenPayload()', async () => {
+  test('generateAccessToken()', async () => {
     const userId = await service.register(registerUserTestInput);
 
-    const payload = await service.generateAccessTokenPayload(userId);
+    const accessToken = await service.generateAccessToken(userId);
 
-    expect(payload).toStrictEqual({
+    const secret = configService.get(ConfigKey.JWT_SECRET);
+
+    const payload = jwtService.verify<JWTAccessTokenAuthPayload>(accessToken, {
+      secret,
+    });
+
+    expect(payload).toMatchObject({
       userId,
       type: JWTTokenType.ACCESS,
     });
   });
 
-  test('generateRefreshTokenPayload()', async () => {
+  test('generateRefreshToken()', async () => {
     const userId = await service.register(registerUserTestInput);
 
-    const payload = await service.generateRefreshTokenPayload(userId);
+    const refreshToken = await service.generateRefreshToken(userId);
 
-    expect(payload).toStrictEqual({
+    const secret = configService.get(ConfigKey.JWT_SECRET);
+
+    const payload = jwtService.verify<JWTRefreshTokenAuthPayload>(
+      refreshToken,
+      {
+        secret,
+      },
+    );
+
+    expect(payload).toMatchObject({
       userId,
       type: JWTTokenType.REFRESH,
     });

@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModule, MongooseModuleFactoryOptions } from '@nestjs/mongoose';
+
 import { ConfigModule } from '@root/config/config.module';
-import { Env } from '@root/config/configuration';
+import { ConfigKey } from '@root/config/configuration';
+
 import { DatabaseService } from './database.service';
 
 @Module({
@@ -10,7 +12,7 @@ import { DatabaseService } from './database.service';
     MongooseModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
         return {
-          uri: configService.get(Env.MONGO_URI),
+          uri: configService.get(ConfigKey.MONGO_URI),
         } as MongooseModuleFactoryOptions;
       },
 

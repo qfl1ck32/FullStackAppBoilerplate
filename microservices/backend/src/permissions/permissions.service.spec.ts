@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DatabaseModule } from '@root/database/database.module';
-import { ObjectId } from '@root/database/database.types';
+import { ObjectId } from '@root/database/defs';
+
 import { AddPermissionInput } from './dto/add-permission.input';
+
 import { PermissionsModule } from './permissions.module';
 import { PermissionsService } from './permissions.service';
 

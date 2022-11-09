@@ -1,8 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { DatabaseModule } from '@root/database/database.module';
+
 import { CreateUserInput } from './dto/create.input';
+
 import { UserPassword } from './entities/user.entity';
+
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
+
 import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 
