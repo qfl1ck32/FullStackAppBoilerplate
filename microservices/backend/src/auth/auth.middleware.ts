@@ -9,7 +9,7 @@ import { ExpiredJwtException } from './exceptions/ExpiredJwt.exception';
 import { InvalidJwtException } from './exceptions/InvalidJwt.exception';
 
 import { AuthService } from './auth.service';
-import { JWTAccessTokenAuthPayload } from './types/jwt-payload.type';
+import { JWTAccessTokenAuthPayload } from './auth.types';
 import { Request } from 'express';
 import { TokenExpiredError } from 'jsonwebtoken';
 
