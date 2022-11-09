@@ -11,7 +11,6 @@ import { ObjectId } from '@root/database/defs';
 import { Role } from '@root/roles/roles.enum';
 
 import { Document } from 'mongoose';
-import { Mixin } from 'ts-mixer';
 
 export type UserDocument = User & Document<ObjectId>;
 
@@ -54,5 +53,3 @@ export class User extends WithBehaviours(Blameable, Timestampable) {
 }
 
 registerEnumType(Role, { name: 'Role' });
-
-const x = new User();
