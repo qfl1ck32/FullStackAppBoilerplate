@@ -2,16 +2,25 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule as GQLModule } from '@nestjs/graphql';
 
+import { AuthModule } from '@root/auth/auth.module';
+import { AuthResolver } from '@root/auth/auth.resolver';
 import { ObjectId } from '@root/database/defs';
 import { Exception } from '@root/exceptions/exception';
+import { PermissionsModule } from '@root/permissions/permissions.module';
 import { UsersModule } from '@root/users/users.module';
+import { UsersResolver } from '@root/users/users.resolver';
 
 import { GQLContext } from './defs';
+
 import { GraphQLError } from 'graphql';
 import * as path from 'path';
 
 @Module({
   imports: [
+    UsersModule,
+    AuthModule,
+    PermissionsModule,
+
     GQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: path.join(process.cwd(), 'src/schema.gql'),
 
@@ -48,10 +57,8 @@ import * as path from 'path';
         };
       },
     }),
-
-    UsersModule,
   ],
 
-  providers: [],
+  providers: [UsersResolver, AuthResolver],
 })
 export class GraphQLModule {}

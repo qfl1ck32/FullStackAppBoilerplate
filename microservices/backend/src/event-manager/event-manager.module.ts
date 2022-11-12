@@ -7,7 +7,5 @@ import { EventManagerService } from './event-manager.service';
   imports: [EventEmitterModule.forRoot()],
 
   providers: [EventManagerService],
-
-  exports: [EventManagerService],
 })
 export class EventManagerModule {}

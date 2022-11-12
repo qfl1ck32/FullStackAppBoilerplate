@@ -3,18 +3,15 @@ import { Prop, Schema } from '@nestjs/mongoose';
 
 import {
   Blameable,
+  Softdeletable,
   Timestampable,
-  WithBehaviours,
 } from '@root/database/collections/collection.behaviours';
-import { Collection } from '@root/database/collections/collection.class';
-import { ObjectId } from '@root/database/defs';
+import {
+  Entity,
+  Mix,
+  createCollection,
+} from '@root/database/collections/collection.class';
 import { Role } from '@root/roles/roles.enum';
-
-import { Document } from 'mongoose';
-
-export type UserDocument = User & Document<ObjectId>;
-
-export type UsersCollection = Collection<User>;
 
 export class UserPassword {
   hash: string;
@@ -28,7 +25,7 @@ export class UserPassword {
 
 @ObjectType()
 @Schema()
-export class User extends WithBehaviours(Blameable, Timestampable) {
+export class User extends Mix(Entity, Blameable, Timestampable, Softdeletable) {
   @Field(() => String)
   @Prop()
   firstName: string;
@@ -53,3 +50,5 @@ export class User extends WithBehaviours(Blameable, Timestampable) {
 }
 
 registerEnumType(Role, { name: 'Role' });
+
+export class UsersCollection extends createCollection(User) {}

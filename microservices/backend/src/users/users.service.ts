@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { InjectCollection } from '@root/database/database.decorators';
-import { ObjectId } from '@root/database/defs';
 import { UsersSecurityService } from '@root/users-security/users-security.service';
 
 import { CreateUserInput } from './dto/create.input';
 
-import { User, UsersCollection } from './entities/user.entity';
+import { UsersCollection } from './entities/user.entity';
 
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
@@ -15,7 +13,7 @@ export class UsersService {
   public emailVerificationTokenLength: number;
 
   constructor(
-    @InjectCollection(User) private readonly collection: UsersCollection,
+    public readonly collection: UsersCollection,
     private readonly security: UsersSecurityService,
   ) {
     this.emailVerificationTokenLength = 16;
@@ -30,21 +28,6 @@ export class UsersService {
       password,
       requiresEmailValidation,
     } = input;
-
-    const { insertedId } = await this.collection.insertOne(
-      {
-        firstName: 'a',
-      } as any,
-      {
-        context: {
-          userId: new ObjectId('aaaaaaaaaaaa'),
-        },
-      },
-    );
-
-    return insertedId;
-
-    throw new Error('Bee');
 
     const user = await this.collection.findOne({
       $or: [
@@ -63,23 +46,19 @@ export class UsersService {
 
     const hash = this.security.hashPassword(password);
 
-    // const newUser = await this.collection.insertOne({
-    //   firstName,
-    //   lastName,
+    const { insertedId: userId } = await this.collection.insertOne({
+      firstName,
+      lastName,
+      email,
+      username,
+      password: {
+        hash,
+        isEnabled: !requiresEmailValidation,
+        requiresEmailValidation,
+      },
+    });
 
-    //   email,
-    //   username,
-
-    //   password: {
-    //     hash,
-
-    //     isEnabled: !requiresEmailValidation,
-
-    //     requiresEmailValidation,
-    //   },
-    // });
-
-    // return newUser;
+    return userId;
   }
 
   async findByUsernameOrEmail(usernameOrEmail: string) {

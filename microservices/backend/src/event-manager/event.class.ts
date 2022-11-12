@@ -1,4 +1,4 @@
-export class Event<T> {
+export class Event<T = any> {
   public readonly payload: T;
 
   constructor(payload: T) {

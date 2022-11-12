@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { SendEmailInput } from './email.types';
+import { SendEmailInput } from './email.defs';
 
 @Injectable()
 export class EmailService {

@@ -22,7 +22,8 @@ import {
   JWTAccessTokenAuthPayload,
   JWTRefreshTokenAuthPayload,
   JWTTokenType,
-} from './auth.types';
+} from './auth.defs';
+
 import { TokenExpiredError } from 'jsonwebtoken';
 
 @Injectable()

@@ -10,7 +10,7 @@ export class AfterInsertEvent<T = any> extends Event<{
 
   context?: Context;
 
-  document: OptionalUnlessRequiredId<T>;
+  document: Partial<OptionalUnlessRequiredId<T>>;
 
   insertResult: InsertOneResult<T>;
 }> {}

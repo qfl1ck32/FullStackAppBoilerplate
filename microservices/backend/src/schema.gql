@@ -3,9 +3,16 @@
 # ------------------------------------------------------
 
 type User {
-  createdByUserId: String!
+  _id: ID!
+  createdByUserId: ID!
+  createdByUser: User!
+  createdByUsers: [User!]!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isDeleted: Boolean
+  deletedAt: DateTime
+  deletedByUserId: ID
+  deletedByUser: User
   firstName: String!
   lastName: String!
   username: String!
@@ -29,7 +36,6 @@ type LoginUserResponse {
 }
 
 type Query {
-  getHello: String!
   hi: User!
   issueAccessToken(input: IssueAccessTokenInput!): String!
 }

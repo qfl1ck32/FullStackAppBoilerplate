@@ -7,13 +7,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
-import { EmailService } from './email/email.service';
 import { EventManagerModule } from './event-manager/event-manager.module';
-import { EventManagerService } from './event-manager/event-manager.service';
 import { GraphQLModule } from './graphql/graphql.module';
 import { PermissionsModule } from './permissions/permissions.module';
-import { RouterService } from './router/router.service';
-import { TestResolver } from './test/test.resolver';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,14 +21,10 @@ import { TestResolver } from './test/test.resolver';
     PermissionsModule,
     ExceptionsModule,
     EventManagerModule,
+    UsersModule,
   ],
+
   controllers: [AppController],
-  providers: [
-    AppService,
-    TestResolver,
-    EmailService,
-    RouterService,
-    EventManagerService,
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -7,6 +7,6 @@ import { OptionalUnlessRequiredId } from 'mongodb';
 
 export class BeforeInsertEvent<T = any> extends Event<{
   collection: Collection<T>;
-  document: OptionalUnlessRequiredId<T>;
+  document: Partial<OptionalUnlessRequiredId<T>>;
   context?: Context;
 }> {}

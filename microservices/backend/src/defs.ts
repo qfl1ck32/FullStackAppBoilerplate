@@ -1,4 +1,5 @@
 import { RequestJwtType } from './auth/auth.middleware';
+
 import 'express';
 import 'mongoose';
 
@@ -18,3 +19,11 @@ declare module 'mongoose' {
     constructor(name: string, conn: Connection, opts?: any);
   }
 }
+
+export type Decorator = (
+  target: Object,
+  key: string | symbol,
+  descriptor: PropertyDescriptor,
+) => PropertyDescriptor | void;
+
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
