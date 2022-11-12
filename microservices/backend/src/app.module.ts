@@ -1,26 +1,33 @@
 import { Module } from '@nestjs/common';
 
-import { ExceptionsModule } from './exceptions/exceptions.module';
+import { AuthModule } from '@app/auth';
+import { UsersModule } from '@app/auth/users/users.module';
+import { CollectionsModule } from '@app/collections';
+import { ConfigModule } from '@app/config';
+import { CoreModule } from '@app/core';
+import { DatabaseModule } from '@app/database';
+import { EmailModule } from '@app/email';
+import { EventManagerModule } from '@app/event-manager';
+import { ExceptionsModule } from '@app/exceptions';
+import { GraphQLModule } from '@app/graphql';
+import { PermissionsModule } from '@app/permissions';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from './config/config.module';
-import { DatabaseModule } from './database/database.module';
-import { EventManagerModule } from './event-manager/event-manager.module';
-import { GraphQLModule } from './graphql/graphql.module';
-import { PermissionsModule } from './permissions/permissions.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    DatabaseModule,
-    GraphQLModule,
     AuthModule,
+    CollectionsModule,
     ConfigModule,
-    PermissionsModule,
-    ExceptionsModule,
+    CoreModule,
+    DatabaseModule,
+    EmailModule,
     EventManagerModule,
+    ExceptionsModule,
+    GraphQLModule,
+    PermissionsModule,
+
     UsersModule,
   ],
 

@@ -1,4 +1,4 @@
-import { RegisterUserInput } from '@root/auth/dto/register.input';
+import { RegisterUserInput } from '@app/auth/dto/register.input';
 
 export const registerUserTestInput = {
   firstName: 'firstName',

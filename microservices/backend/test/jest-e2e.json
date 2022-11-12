@@ -1,9 +1,37 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@collections/collections/(.*)": "<rootDir>/../libs/collections/src/$1",
+    "@collections/collections": "<rootDir>/../libs/collections/src",
+    "@database/database/(.*)": "<rootDir>/../libs/database/src/$1",
+    "@database/database": "<rootDir>/../libs/database/src",
+    "@core/core/(.*)": "<rootDir>/../libs/core/src/$1",
+    "@core/core": "<rootDir>/../libs/core/src",
+    "@app/event-manager/(.*)": "<rootDir>/../libs/event-manager/src/$1",
+    "@app/event-manager": "<rootDir>/../libs/event-manager/src",
+    "@app/exceptions/(.*)": "<rootDir>/../libs/exceptions/src/$1",
+    "@app/exceptions": "<rootDir>/../libs/exceptions/src",
+    "@app/database/(.*)": "<rootDir>/../libs/database/src/$1",
+    "@app/database": "<rootDir>/../libs/database/src",
+    "@app/config/(.*)": "<rootDir>/../libs/config/src/$1",
+    "@app/config": "<rootDir>/../libs/config/src",
+    "@app/graphql/(.*)": "<rootDir>/../libs/graphql/src/$1",
+    "@app/graphql": "<rootDir>/../libs/graphql/src",
+    "@app/auth/(.*)": "<rootDir>/../libs/auth/src/$1",
+    "@app/auth": "<rootDir>/../libs/auth/src",
+    "@app/permissions/(.*)": "<rootDir>/../libs/permissions/src/$1",
+    "@app/permissions": "<rootDir>/../libs/permissions/src",
+    "@app/email/(.*)": "<rootDir>/../libs/email/src/$1",
+    "@app/email": "<rootDir>/../libs/email/src"
   }
 }

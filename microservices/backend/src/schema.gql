@@ -4,15 +4,6 @@
 
 type User {
   _id: ID!
-  createdByUserId: ID!
-  createdByUser: User!
-  createdByUsers: [User!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  isDeleted: Boolean
-  deletedAt: DateTime
-  deletedByUserId: ID
-  deletedByUser: User
   firstName: String!
   lastName: String!
   username: String!
@@ -20,44 +11,11 @@ type User {
   roles: [Role!]!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 enum Role {
-  END_USER
-  ADMIN
-}
-
-type LoginUserResponse {
-  accessToken: String!
-  refreshToken: String!
+  Admin
+  EndUser
 }
 
 type Query {
   hi: User
-  issueAccessToken(input: IssueAccessTokenInput!): String!
-}
-
-input IssueAccessTokenInput {
-  refreshToken: String!
-}
-
-type Mutation {
-  register(input: RegisterUserInput!): Boolean!
-  login(input: LoginUserInput!): LoginUserResponse!
-}
-
-input RegisterUserInput {
-  firstName: String!
-  lastName: String!
-  email: String!
-  username: String
-  password: String!
-}
-
-input LoginUserInput {
-  usernameOrEmail: String!
-  password: String!
 }

@@ -7,9 +7,9 @@
   "importOrder": [
     "^@nestjs/(.*)$",
 
-    "<THIRD_PARTY_MODULES>",
+    "^@app/(.*)$",
 
-    "^@root/(.*)$",
+    "<THIRD_PARTY_MODULES>",
 
     "^./dto/(.*)$",
     "^./entities/(.*)$",
@@ -21,6 +21,8 @@
     "^../(.*)$",
 
     "^(.*)$",
+
+    "^@root/(.*)$",
 
     "^@test/(.*)$"
   ],
