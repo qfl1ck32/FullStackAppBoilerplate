@@ -15,18 +15,22 @@ export class UsersResolver {
   ) {}
 
   // Todo: Why do I need a @Query() necessarily?
-  @Query(() => User)
+  @Query(() => User, { nullable: true })
   async hi() {
     return this.usersService.collection.queryOne(
       {
         firstName: {
-          $in: ['b'],
+          $in: ['ba'],
         },
       },
       {
         firstName: 1,
-        createdByUsers: {
+        createdByUser: {
           _id: 1,
+
+          createdByUser: {
+            _id: 1,
+          },
         },
       },
     );

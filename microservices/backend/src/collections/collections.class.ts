@@ -1,23 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema } from '@nestjs/mongoose';
 
 import { Constructor } from '@root/defs';
 import { EventManagerService } from '@root/event-manager/event-manager.service';
 
-import { getBehaviours } from './collection.behaviours';
-import { BehaviourFunction, CollectionRelations } from './collection.types';
+import { getBehaviours } from './collections.behaviours';
+import { BehaviourFunction, CollectionRelations } from './collections.types';
 
-import { getRelations } from '../database.decorators';
-import { QueryBodyType, RelationArgs } from '../database.defs';
-import { DatabaseService } from '../database.service';
-import { DBContext, ObjectId } from '../defs';
-import { AfterDeleteEvent } from '../events/after-delete.event';
-import { AfterInsertEvent } from '../events/after-insert.event';
-import { AfterUpdateEvent } from '../events/after-update.event';
-import { BeforeDeleteEvent } from '../events/before-delete.event';
-import { BeforeInsertEvent } from '../events/before-insert.event';
-import { BeforeUpdateEvent } from '../events/before-update.event';
+import { getRelations } from '../database/database.decorators';
+import { QueryBodyType, RelationArgs } from '../database/database.defs';
+import { DatabaseService } from '../database/database.service';
+import { DBContext, ObjectId } from '../database/defs';
+import { AfterDeleteEvent } from '../database/events/after-delete.event';
+import { AfterInsertEvent } from '../database/events/after-insert.event';
+import { AfterUpdateEvent } from '../database/events/after-update.event';
+import { BeforeDeleteEvent } from '../database/events/before-delete.event';
+import { BeforeInsertEvent } from '../database/events/before-insert.event';
+import { BeforeUpdateEvent } from '../database/events/before-update.event';
 
 import {
   DeleteOptions,
@@ -183,7 +183,8 @@ export class Collection<T = any> extends BaseCollection<T> {
     return deleteResult;
   }
 
-  private async queryOneRec<T>(body: QueryBodyType<T>, finalData: any) {
+  // TODO: types
+  private async queryOneRec<T>(body: QueryBodyType<T>, document: any) {
     for (const key in body) {
       const relation = this.relations[key as any];
 
@@ -197,7 +198,7 @@ export class Collection<T = any> extends BaseCollection<T> {
       let result: any;
 
       const filters = {
-        _id: finalData._id,
+        _id: document._id,
       } as Filter<T>;
 
       if (isArray) {
@@ -206,27 +207,22 @@ export class Collection<T = any> extends BaseCollection<T> {
         result = await collection.findOne(filters);
       }
 
-      finalData[key as any] = result;
+      document[key as any] = result;
 
-      console.log({ key, finalData, body });
+      console.log({ key, finalData: document, body });
 
-      await this.queryOneRec(body[key as any], finalData[key]);
+      await this.queryOneRec(body[key as any], document[key]);
     }
   }
 
   async queryOne(filters: Filter<T>, body: QueryBodyType<T>) {
-    const data = await this.findOne(filters, body);
+    let document = await this.findOne(filters, body);
 
-    let finalData = data;
+    if (document) {
+      await this.queryOneRec(body, document);
+    }
 
-    console.log(finalData);
-    console.log('Start...');
-
-    await this.queryOneRec(body, finalData);
-
-    console.log(finalData);
-
-    return data;
+    return document;
   }
 }
 

@@ -5,12 +5,12 @@ import {
   Blameable,
   Softdeletable,
   Timestampable,
-} from '@root/database/collections/collection.behaviours';
+} from '@root/collections/collections.behaviours';
 import {
   Entity,
   Mix,
   createCollection,
-} from '@root/database/collections/collection.class';
+} from '@root/collections/collections.class';
 import { Role } from '@root/roles/roles.enum';
 
 export class UserPassword {

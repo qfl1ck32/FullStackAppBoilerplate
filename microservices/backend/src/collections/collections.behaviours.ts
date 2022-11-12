@@ -21,12 +21,12 @@ import { Constructor } from '@root/defs';
 import type { User as UserType } from '@root/users/entities/user.entity';
 import { User } from '@root/users/entities/user.entity';
 
-import { BehaviourFunction } from './collection.types';
+import { BehaviourFunction } from './collections.types';
 
-import { Relations } from '../database.decorators';
-import { ObjectId } from '../defs';
-import { BeforeInsertEvent } from '../events/before-insert.event';
-import { UserMissingException } from '../exceptions/user-missing.exception';
+import { Relations } from '../database/database.decorators';
+import { ObjectId } from '../database/defs';
+import { BeforeInsertEvent } from '../database/events/before-insert.event';
+import { UserMissingException } from '../database/exceptions/user-missing.exception';
 
 import { decorate } from 'ts-mixer';
 

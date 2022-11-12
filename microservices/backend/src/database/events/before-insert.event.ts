@@ -1,6 +1,6 @@
 import { Event } from '@root/event-manager/event.class';
 
-import { Collection } from '../collections/collection.class';
+import { Collection } from '../../collections/collections.class';
 import { Context } from '../defs';
 
 import { OptionalUnlessRequiredId } from 'mongodb';

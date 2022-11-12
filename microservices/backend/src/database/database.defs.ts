@@ -20,11 +20,7 @@ export interface RelationArgs<From = any, To = any> {
 
 export type SimpleFieldValue = 1 | true;
 
-export type Flatten<T> = T extends (infer U)[]
-  ? U
-  : T extends object
-  ? keyof T
-  : T;
+export type Flatten<T> = T extends (infer U)[] ? U : T;
 
 export type QueryBodyType<T> = {
   [K in keyof T]?: T[K] extends string

@@ -1,4 +1,4 @@
-import { Collection } from './collection.class';
+import { Collection } from './collections.class';
 
 import { Document } from 'mongodb';
 
