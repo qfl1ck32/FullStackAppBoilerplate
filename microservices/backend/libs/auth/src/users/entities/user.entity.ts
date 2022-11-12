@@ -1,11 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Prop, Schema } from '@nestjs/mongoose';
 
-import {
-  Entity,
-  Mix,
-  createCollection,
-} from '@app/collections/collections.class';
+import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
+import { Entity, Mix } from '@app/collections/collections.class';
 import { Role } from '@app/permissions/defs';
 
 export class UserPassword {
@@ -20,7 +17,7 @@ export class UserPassword {
 
 @ObjectType()
 @Schema()
-export class User extends Mix(Entity) {
+export class User extends Entity {
   @Field(() => String)
   @Prop()
   firstName: string;
@@ -44,6 +41,6 @@ export class User extends Mix(Entity) {
   password: UserPassword;
 }
 
+// TODO: this should happen in another place, because you might wanna change "Role".
+// Same goes for the users collection
 registerEnumType(Role, { name: 'Role' });
-
-export class UsersCollection extends createCollection(User) {}

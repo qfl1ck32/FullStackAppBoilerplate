@@ -1,8 +1,12 @@
-import { applyDecorators } from '@nestjs/common';
+import { Inject, applyDecorators } from '@nestjs/common';
 
 import { Constructor, Decorator } from '@app/core/defs';
 
-import { RelationArgs } from './defs';
+import { RelationArgs, getCollectionProviderKey } from './defs';
+
+export function InjectCollection<T>(entity: Constructor<T>) {
+  return Inject(getCollectionProviderKey(entity));
+}
 
 const RELATIONS_METADATA_KEY = 'COLLECTION.RELATIONS';
 

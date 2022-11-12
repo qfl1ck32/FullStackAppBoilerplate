@@ -1,11 +1,9 @@
 import { Query, ResolveField, Resolver } from '@nestjs/graphql';
 
+import { User } from '@app/auth/users/entities/user.entity';
+import { UsersService } from '@app/auth/users/users.service';
 import { PermissionsService } from '@app/permissions';
 import { Role } from '@app/permissions/defs';
-
-import { User } from './entities/user.entity';
-
-import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {

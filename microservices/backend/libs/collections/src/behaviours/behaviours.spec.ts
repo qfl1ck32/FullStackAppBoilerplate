@@ -74,7 +74,7 @@ describe('Behaviours', () => {
   });
 
   it('should work with blameable', async () => {
-    class User extends Blameable<User> {
+    class User extends Blameable {
       firstName: string;
     }
     const { collection } = await getCollectionAndEventManager(User);

@@ -6,6 +6,10 @@ import { ObjectId } from 'bson';
 import { Document } from 'mongodb';
 import 'mongoose';
 
+export function getCollectionProviderKey<T>(entity: Constructor<T>) {
+  return `${entity.name}Collection`;
+}
+
 // MAGIC :)
 declare module 'mongoose' {
   class Collection {

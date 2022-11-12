@@ -1,14 +1,10 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 
-import {
-  Entity,
-  Mix,
-  createCollection,
-} from '@app/collections/collections.class';
+import { Entity } from '@app/collections/collections.class';
 import { ObjectId } from '@app/collections/defs';
 
 @Schema()
-export class Permission extends Mix(Entity) {
+export class Permission extends Entity {
   @Prop()
   permission: string;
 
@@ -18,5 +14,3 @@ export class Permission extends Mix(Entity) {
   @Prop()
   userId: ObjectId;
 }
-
-export class PermissionsCollection extends createCollection(Permission) {}

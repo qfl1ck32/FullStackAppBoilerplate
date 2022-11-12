@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
+import { Collection } from '@app/collections/collections.class';
+import { InjectCollection } from '@app/collections/collections.decorators';
+
 import { AddPermissionInput } from './dto/add-permission.input';
 import { FindPermissionInput } from './dto/find-permission.input';
 import { HasPermissionInput } from './dto/has-permission.input';
 import { RemovePermissionInput } from './dto/remove-permission.input';
 
-import { PermissionsCollection } from './entities/permission.entity';
+import { Permission } from './entities/permission.entity';
 
 @Injectable()
 export class PermissionsService {
-  constructor(public collection: PermissionsCollection) {}
+  constructor(
+    @InjectCollection(Permission)
+    public collection: Collection<Permission>,
+  ) {}
 
   async find(input: FindPermissionInput) {
     return this.collection.find(input);

@@ -24,15 +24,15 @@ import { decorate } from 'ts-mixer';
 */
 
 const timestampable: BehaviourFunction = (collection) => {
-  const listener = async (event: BeforeInsertEvent) => {
+  const listener = async (event: BeforeInsertEvent<Timestampable>) => {
     const { payload } = event;
 
     const { document } = payload;
 
     const date = new Date();
 
-    document['createdAt'] = date;
-    document['updatedAt'] = date;
+    document.createdAt = date;
+    document.updatedAt = date;
   };
 
   return collection.eventManager.addListener(BeforeInsertEvent, listener);

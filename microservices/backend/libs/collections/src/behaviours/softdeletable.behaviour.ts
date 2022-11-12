@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema } from '@nestjs/mongoose';
 
+import { User } from '@app/auth/users/entities/user.entity';
+
 import { AddBehaviour } from './utils';
 
 import { BehaviourFunction, ObjectId } from '../defs';
@@ -108,6 +110,6 @@ export class Softdeletable {
   @decorate(Prop())
   deletedByUserId?: ObjectId;
 
-  @decorate(Field(() => String, { nullable: true }))
-  deletedByUser?: string;
+  @decorate(Field(() => User, { nullable: true }))
+  deletedByUser?: User;
 }

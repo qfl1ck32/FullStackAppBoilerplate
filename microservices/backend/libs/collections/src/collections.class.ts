@@ -40,19 +40,6 @@ import { Collection as BaseCollection } from 'mongoose';
 import * as pluralize from 'pluralize';
 import { Mixin, decorate } from 'ts-mixer';
 
-export function createCollection<T>(entity: Constructor<T>) {
-  @Injectable()
-  class CollectionWrapper extends Collection {
-    constructor(
-      public readonly databaseService: DatabaseService,
-      public readonly eventManager: EventManagerService,
-    ) {
-      super(entity, databaseService, eventManager);
-    }
-  }
-
-  return CollectionWrapper as Constructor<Collection<T>>;
-}
 @Injectable()
 export class Collection<T = any> extends BaseCollection<T> {
   private _relations: CollectionRelations<T>;
@@ -65,6 +52,7 @@ export class Collection<T = any> extends BaseCollection<T> {
     const behaviours = getBehaviours(entity);
     const relations = getRelations(entity);
 
+    console.log(entity);
     const name = getCollectionName(entity);
 
     super(name, databaseService.connection, {});

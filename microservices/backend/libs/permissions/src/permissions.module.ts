@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 
+import { ProvideCollection } from '@app/collections/collections.provider';
 import { DatabaseModule } from '@app/database';
 
-import { PermissionsCollection } from './entities/permission.entity';
+import { Permission } from './entities/permission.entity';
 
 import { PermissionsService } from './permissions.service';
 
 @Module({
   imports: [DatabaseModule],
 
-  providers: [PermissionsService, PermissionsCollection],
-  exports: [PermissionsService, PermissionsCollection],
+  providers: [PermissionsService, ProvideCollection(Permission)],
+  exports: [PermissionsService],
 })
 export class PermissionsModule {}
