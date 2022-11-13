@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { UsersService } from '@app/auth/users/users.service';
 import { ObjectId } from '@app/collections/defs';
 import { ConfigService } from '@app/config';
 import { PermissionsService } from '@app/permissions';
 import { Domain, Role } from '@app/permissions/defs';
+import { UsersService } from '@app/users';
+import { UsersSecurityService } from '@app/users/users-security.service';
 
 import { IssueAccessTokenInput } from './dto/issueAccessToken.input';
 import { LoginUserInput, LoginUserResponse } from './dto/login.input';
@@ -21,7 +22,6 @@ import {
   JWTRefreshTokenAuthPayload,
   JWTTokenType,
 } from './auth.defs';
-import { UsersSecurityService } from './users-security/users-security.service';
 
 import { TokenExpiredError } from 'jsonwebtoken';
 

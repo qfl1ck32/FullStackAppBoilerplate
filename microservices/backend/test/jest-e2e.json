@@ -32,6 +32,8 @@
     "@app/permissions/(.*)": "<rootDir>/../libs/permissions/src/$1",
     "@app/permissions": "<rootDir>/../libs/permissions/src",
     "@app/email/(.*)": "<rootDir>/../libs/email/src/$1",
-    "@app/email": "<rootDir>/../libs/email/src"
+    "@app/email": "<rootDir>/../libs/email/src",
+    "@app/users/(.*)": "<rootDir>/../libs/users/src/$1",
+    "@app/users": "<rootDir>/../libs/users/src"
   }
 }

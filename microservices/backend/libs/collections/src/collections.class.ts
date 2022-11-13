@@ -52,7 +52,6 @@ export class Collection<T = any> extends BaseCollection<T> {
     const behaviours = getBehaviours(entity);
     const relations = getRelations(entity);
 
-    console.log(entity);
     const name = getCollectionName(entity);
 
     super(name, databaseService.connection, {});
@@ -271,7 +270,7 @@ export class Entity {
   _id: ObjectId;
 }
 
-export const Mix = Mixin;
+export const Mix = Mixin as any;
 
 export function getCollectionName<T>(entity: Constructor<T>) {
   return pluralize(entity.name.toLowerCase());

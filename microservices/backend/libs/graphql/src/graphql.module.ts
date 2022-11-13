@@ -2,9 +2,9 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule as GQLModule } from '@nestjs/graphql';
 
-import { UsersModule } from '@app/auth/users/users.module';
 import { ObjectId } from '@app/collections/defs';
 import { Exception } from '@app/exceptions/exception.class';
+import { UsersModule } from '@app/users';
 
 import { GQLContext } from './defs';
 

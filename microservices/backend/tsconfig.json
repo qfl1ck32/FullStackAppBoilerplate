@@ -92,6 +92,12 @@
       ],
       "@app/email/*": [
         "libs/email/src/*"
+      ],
+      "@app/users": [
+        "libs/users/src"
+      ],
+      "@app/users/*": [
+        "libs/users/src/*"
       ]
     }
   }

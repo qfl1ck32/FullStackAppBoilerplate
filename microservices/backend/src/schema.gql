@@ -4,12 +4,25 @@
 
 type User {
   _id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   firstName: String!
   lastName: String!
   username: String!
   email: String!
   roles: [Role!]!
+  isDeleted: Boolean
+  deletedAt: DateTime
+  deletedByUserId: ID
+  deletedByUser: User
+  createdByUserId: ID
+  createdByUser: User
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 enum Role {
   Admin

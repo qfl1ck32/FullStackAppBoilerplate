@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthModule, AuthService } from '@app/auth';
 import { RegisterUserInput } from '@app/auth/dto/register.input';
-import { UsersService } from '@app/auth/users/users.service';
 
 import { UsersModule } from './users.module';
 import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service';
 
 describe('UsersResolver', () => {
   let resolver: UsersResolver;

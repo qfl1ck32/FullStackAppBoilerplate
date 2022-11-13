@@ -5,17 +5,16 @@ import { DatabaseService } from '@app/database';
 import { EventManagerService } from '@app/event-manager';
 
 import { Collection } from './collections.class';
-import { getCollectionProviderKey } from './defs';
+import { getCollectionToken } from './defs';
 
 export function ProvideCollection<T>(entity: Constructor<T>) {
   return {
-    provide: getCollectionProviderKey(entity),
+    provide: getCollectionToken(entity),
 
     useFactory: (
       databaseService: DatabaseService,
       eventManager: EventManagerService,
     ) => {
-      console.log(entity);
       return new Collection(entity, databaseService, eventManager);
     },
 

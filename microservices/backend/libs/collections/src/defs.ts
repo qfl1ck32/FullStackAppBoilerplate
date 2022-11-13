@@ -6,7 +6,7 @@ import { ObjectId } from 'bson';
 import { Document } from 'mongodb';
 import 'mongoose';
 
-export function getCollectionProviderKey<T>(entity: Constructor<T>) {
+export function getCollectionToken<T>(entity: Constructor<T>) {
   return `${entity.name}Collection`;
 }
 

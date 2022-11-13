@@ -4,7 +4,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule } from '@app/config';
 import { DatabaseModule } from '@app/database';
 
-import { Entity, createCollection } from './collections.class';
+import { Collection, Entity } from './collections.class';
+import { ProvideCollection } from './collections.provider';
+import { getCollectionToken } from './defs';
 
 describe('Collections', () => {
   @Schema()
@@ -13,18 +15,16 @@ describe('Collections', () => {
     firstName: string;
   }
 
-  class UsersCollection extends createCollection(User) {}
-
-  let collection: UsersCollection;
+  let collection: Collection<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, ConfigModule],
 
-      providers: [UsersCollection],
+      providers: [ProvideCollection(User)],
     }).compile();
 
-    collection = module.get(UsersCollection);
+    collection = module.get<Collection<User>>(getCollectionToken(User));
   });
 
   it('should insert a document', async () => {

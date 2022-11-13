@@ -9,20 +9,19 @@ import { Blameable } from './blameable.behaviour';
 import { Softdeletable } from './softdeletable.behaviour';
 import { Timestampable } from './timestampable.behaviour';
 
-import { createCollection } from '../collections.class';
-import { ObjectId } from '../defs';
+import { Collection } from '../collections.class';
+import { ProvideCollection } from '../collections.provider';
+import { ObjectId, getCollectionToken } from '../defs';
 import { UserMissingException } from '../exceptions/user-missing.exception';
 
 async function getCollectionAndEventManager<T>(entity: Constructor<T>) {
-  class Collection extends createCollection(entity) {}
-
   const module: TestingModule = await Test.createTestingModule({
     imports: [DatabaseModule, ConfigModule, EventManagerModule],
 
-    providers: [Collection],
+    providers: [ProvideCollection(entity)],
   }).compile();
 
-  const collection = module.get(Collection);
+  const collection = module.get<Collection<T>>(getCollectionToken(entity));
 
   const eventManager = module.get(EventManagerService);
 

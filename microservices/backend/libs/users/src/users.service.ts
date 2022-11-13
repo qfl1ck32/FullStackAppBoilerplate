@@ -5,11 +5,10 @@ import { InjectCollection } from '@app/collections/collections.decorators';
 
 import { CreateUserInput } from './dto/create.input';
 
-import { User } from './entities/user.entity';
-
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
-import { UsersSecurityService } from '../users-security/users-security.service';
+import { UsersSecurityService } from './users-security.service';
+import { User } from './users.entity';
 
 @Injectable()
 export class UsersService {
