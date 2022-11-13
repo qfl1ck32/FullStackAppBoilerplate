@@ -6,6 +6,7 @@ import { softdeletable } from '@app/collections/behaviours/softdeletable.behavio
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { AddBehaviour } from '@app/collections/behaviours/utils';
 import { Entity, Mix } from '@app/collections/collections.class';
+import { Relations } from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
 import { Role } from '@app/permissions/defs';
 
@@ -21,8 +22,24 @@ export class UserPassword {
 
 @ObjectType()
 @Schema()
-@AddBehaviour(blameable)
-@AddBehaviour(softdeletable)
+@AddBehaviour(
+  blameable({
+    throwErrorWhenMissing: false,
+  }),
+)
+@AddBehaviour(softdeletable())
+@Relations<User>()
+  .add({
+    field: 'deletedByUser',
+    fieldId: 'deletedByUserId',
+    to: () => User,
+  })
+  .add({
+    field: 'createdByUser',
+    fieldId: 'createdByUserId',
+    to: () => User,
+  })
+  .build()
 export class User extends Mix(Entity, Timestampable) {
   @Field(() => String)
   @Prop()

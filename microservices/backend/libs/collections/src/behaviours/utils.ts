@@ -2,9 +2,9 @@ import { SetMetadata } from '@nestjs/common';
 
 import { Constructor } from '@app/core/defs';
 
-import { BehaviourFunction } from '../defs';
+import { AddBehaviourType, BehaviourFunction } from '../defs';
 
-export const AddBehaviour = (behaviour: BehaviourFunction) => {
+export const AddBehaviour = (behaviour: AddBehaviourType) => {
   return SetMetadata(`Behaviour.${behaviour.name}`, behaviour);
 };
 

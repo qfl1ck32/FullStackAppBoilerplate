@@ -3,7 +3,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 
 import { AddBehaviour } from './utils';
 
-import { BehaviourFunction } from '../defs';
+import { BehaviourFunction, TimestampableBehaviourOptions } from '../defs';
 import { BeforeInsertEvent } from '../events/before-insert.event';
 
 import { decorate } from 'ts-mixer';
@@ -23,24 +23,29 @@ import { decorate } from 'ts-mixer';
     Ok, it was working, I just removed "type" from UserType, WTF?
 */
 
-const timestampable: BehaviourFunction = (collection) => {
-  const listener = async (event: BeforeInsertEvent<Timestampable>) => {
-    const { payload } = event;
+const timestampable: BehaviourFunction<
+  Timestampable,
+  TimestampableBehaviourOptions
+> = (options) => {
+  return (collection) => {
+    const listener = async (event: BeforeInsertEvent<Timestampable>) => {
+      const { payload } = event;
 
-    const { document } = payload;
+      const { document } = payload;
 
-    const date = new Date();
+      const date = new Date();
 
-    document.createdAt = date;
-    document.updatedAt = date;
+      document.createdAt = date;
+      document.updatedAt = date;
+    };
+
+    return collection.eventManager.addListener(BeforeInsertEvent, listener);
   };
-
-  return collection.eventManager.addListener(BeforeInsertEvent, listener);
 };
 
 @decorate(ObjectType())
 @decorate(Schema())
-@decorate(AddBehaviour(timestampable))
+@decorate(AddBehaviour(timestampable()))
 export class Timestampable {
   @decorate(Field(() => Date))
   @decorate(Prop())

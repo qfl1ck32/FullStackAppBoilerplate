@@ -50,7 +50,7 @@ describe('UsersService', () => {
     expect(user.lastName).toBe(input.lastName);
 
     expect(user.password).toMatchObject({
-      hasEmailVerified: undefined,
+      requiresEmailValidation: false,
       isEnabled: true,
     } as Partial<UserPassword>);
 
@@ -75,7 +75,7 @@ describe('UsersService', () => {
     const user = await service.findByUsernameOrEmail(input.email);
 
     expect(user.password).toMatchObject({
-      hasEmailVerified: false,
+      requiresEmailValidation: true,
       isEnabled: false,
     } as Partial<UserPassword>);
   });

@@ -19,9 +19,21 @@ declare module 'mongoose' {
 
 export { ObjectId };
 
-export type BehaviourFunction<T extends Document = any> = (
-  collection: Collection<T>,
-) => void;
+export interface BlameableBehaviourOptions {
+  throwErrorWhenMissing?: boolean;
+}
+
+export interface SoftdeletableBehaviourOptions {
+  throwErrorWhenMissing?: boolean;
+}
+
+export interface TimestampableBehaviourOptions {}
+
+export type AddBehaviourType<T = any> = (collection: Collection<T>) => void;
+
+export type BehaviourFunction<T extends Document = any, OptionsType = any> = (
+  options?: OptionsType,
+) => AddBehaviourType<T>;
 
 export type CollectionRelationType<T> = {
   collectionName: string;

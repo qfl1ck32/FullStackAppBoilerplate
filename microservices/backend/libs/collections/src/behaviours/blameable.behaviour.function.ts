@@ -1,23 +1,28 @@
 import { Blameable } from './blameable.behaviour';
 
-import { BehaviourFunction } from '../defs';
+import { BehaviourFunction, BlameableBehaviourOptions } from '../defs';
 import { BeforeInsertEvent } from '../events/before-insert.event';
 import { UserMissingException } from '../exceptions/user-missing.exception';
 
-export const blameable: BehaviourFunction = (collection) => {
-  const listener = async (event: BeforeInsertEvent<Blameable>) => {
-    const { payload } = event;
+export const blameable: BehaviourFunction<
+  Blameable,
+  BlameableBehaviourOptions
+> = (options = {}) => {
+  return (collection) => {
+    const listener = async (event: BeforeInsertEvent<Blameable>) => {
+      const { payload } = event;
 
-    const { document, context } = payload;
+      const { document, context } = payload;
 
-    if (!context?.userId) {
-      throw new UserMissingException();
-    }
+      if (!context?.userId) {
+        if (options.throwErrorWhenMissing) {
+          throw new UserMissingException();
+        }
+      }
 
-    const { userId } = context;
+      document.createdByUserId = context?.userId;
+    };
 
-    document.createdByUserId = userId;
+    return collection.eventManager.addListener(BeforeInsertEvent, listener);
   };
-
-  return collection.eventManager.addListener(BeforeInsertEvent, listener);
 };

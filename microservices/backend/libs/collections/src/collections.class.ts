@@ -16,7 +16,7 @@ import { BeforeUpdateEvent } from './events/before-update.event';
 import { getBehaviours } from './behaviours/utils';
 import { getRelations } from './collections.decorators';
 import {
-  BehaviourFunction,
+  AddBehaviourType,
   CollectionRelationType,
   CollectionRelations,
   DBContext,
@@ -64,7 +64,7 @@ export class Collection<T = any> extends BaseCollection<T> {
     this._initialiseRelations(relations);
   }
 
-  public _loadBehaviours(behaviours: BehaviourFunction[]) {
+  public _loadBehaviours(behaviours: AddBehaviourType[]) {
     behaviours.forEach((behaviour) => behaviour(this));
   }
 
