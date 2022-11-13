@@ -18,7 +18,7 @@ export class PermissionsService {
   ) {}
 
   async find(input: FindPermissionInput) {
-    return this.collection.find(input);
+    return this.collection.find(input).toArray();
   }
 
   async has(input: HasPermissionInput) {
