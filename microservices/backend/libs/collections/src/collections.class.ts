@@ -23,9 +23,11 @@ import {
   CollectionRelations,
   DBContext,
   FindOptions,
+  MONGODB_QUERY_OPERATORS,
   ObjectId,
   QueryBodyType,
   RelationArgs,
+  SimpleFilter,
 } from './defs';
 
 import {
@@ -50,7 +52,7 @@ export class Collection<
   DBEntity = any,
   Entity = DBEntity,
 > extends BaseCollection<DBEntity> {
-  private _relations: CollectionRelations<DBEntity>;
+  public _relations: CollectionRelations<DBEntity>;
 
   constructor(
     public entities: CollectionEntities<DBEntity, Entity>,
@@ -86,6 +88,10 @@ export class Collection<
       const { isArray, to, inversedBy, field, fieldId } = relation;
 
       const entity = to();
+
+      if (fieldId) {
+        await this.createIndex([fieldId.toString()]);
+      }
 
       // TODO: types?
       this._relations[field as any] = {
@@ -251,9 +257,13 @@ export class Collection<
   }
 
   // TODO: types
-  private async _findRelationalRec<T>(body: QueryBodyType<T>, document: any) {
+  private async _queryRec<T>(body: QueryBodyType<T>, document: any) {
     for (const key in body) {
       const relation = this._relations[key as any] as CollectionRelationType<T>;
+
+      if (document[key]) {
+        continue;
+      }
 
       if (!relation) continue;
 
@@ -275,7 +285,7 @@ export class Collection<
 
       document[key as any] = result;
 
-      await this._findRelationalRec(body[key as any], document[key as any]);
+      await this._queryRec(body[key as any], document[key as any]);
     }
   }
 
@@ -283,14 +293,14 @@ export class Collection<
     let document = await this.findOne(filters, body._options);
 
     if (document) {
-      await this._findRelationalRec(body, document);
+      await this._queryRec(body, document);
     }
 
     // TODO: can we fix "as unknown"?
     return document as unknown as WithId<Entity>;
   }
 
-  async query(filters: Filter<DBEntity>, body: QueryBodyType<DBEntity>) {
+  async query(filters: Filter<DBEntity>, body: QueryBodyType<Entity>) {
     // TODO: should use projection, theoretically
     // Or, if it's faster, just clean the query up after the result :)
     let documents = await this.find(filters, body._options).toArray();
@@ -298,12 +308,118 @@ export class Collection<
     const promises = [];
 
     for (const document of documents) {
-      promises.push(this._findRelationalRec(body, document));
+      promises.push(this._queryRec(body, document));
     }
 
     await Promise.all(promises);
 
     return documents;
+  }
+
+  async _findRelationalRec(
+    filters: SimpleFilter<Entity>,
+    currentPath: string[],
+    pipeline: Document[],
+    collection: Collection,
+  ) {
+    for (const field in filters) {
+      let currentFieldName = currentPath.join('.');
+
+      if (currentFieldName) {
+        currentFieldName += '.';
+      }
+
+      const value = filters[field];
+
+      const key = Object.keys(value)[0];
+
+      if (typeof value !== 'object' || MONGODB_QUERY_OPERATORS.includes(key)) {
+        pipeline.push({
+          $match: {
+            [`${currentFieldName}${field}`]: value,
+          },
+        });
+
+        continue;
+      }
+
+      const relation = collection._relations[field] as CollectionRelationType;
+
+      if (relation) {
+        const { entity, fieldId, isArray, inversedBy } = relation;
+
+        const documents = [] as Document[];
+
+        if (fieldId) {
+          documents.push({
+            $lookup: {
+              from: getCollectionName(entity),
+              localField: `${currentFieldName}${fieldId}`,
+              foreignField: `_id`,
+              as: `${currentFieldName}${field}`,
+            },
+          });
+        } else if (inversedBy) {
+          const inversedCollection = this.collectionsStorage.get(entity);
+
+          const inversedRelation =
+            inversedCollection._relations[relation.inversedBy];
+
+          documents.push({
+            $lookup: {
+              from: getCollectionName(entity),
+              localField: `${currentFieldName}_id`,
+              foreignField: `${inversedRelation.fieldId}`,
+              as: `${currentFieldName}${field}`,
+            },
+          });
+        }
+
+        // TODO: this can fasten things up if deleted Ig
+        if (!isArray) {
+          documents.push({
+            $unwind: {
+              path: `$${currentFieldName}${field}`,
+            },
+          });
+        }
+
+        pipeline.push(...documents);
+
+        await this._findRelationalRec(
+          value,
+          currentPath.concat(field),
+          pipeline,
+          this.collectionsStorage.get(entity),
+        );
+      }
+    }
+  }
+
+  async findRelational(
+    filters: SimpleFilter<Entity>,
+    body: QueryBodyType<Entity>,
+  ) {
+    const pipeline: Document[] = [];
+
+    await this._findRelationalRec(filters, [], pipeline, this);
+
+    const documents = await this.aggregate([]).toArray();
+
+    for (const document of documents) {
+      await this._queryRec(body, document);
+    }
+
+    return documents;
+  }
+
+  async findOneRelational(
+    filters: SimpleFilter<Entity>,
+    body: QueryBodyType<Entity>,
+  ) {
+    const results = await this.findRelational(filters, body);
+
+    return results[0];
   }
 }
 

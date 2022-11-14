@@ -6,7 +6,13 @@ import { Constructor } from '@app/core/defs';
 import { DatabaseModule } from '@app/database';
 import { EventManagerModule } from '@app/event-manager';
 
-import { Collection, Entity, Mix } from './collections.class';
+import { Timestampable } from './behaviours/timestampable.behaviour';
+import {
+  Collection,
+  Entity,
+  Mix,
+  getCollectionName,
+} from './collections.class';
 import { Relations } from './collections.decorators';
 import { CollectionsModule } from './collections.module';
 import { ProvideCollection } from './collections.provider';
@@ -16,6 +22,8 @@ import {
   createEntity,
   getCollectionToken,
 } from './defs';
+
+import { performance } from 'node:perf_hooks';
 
 const generateModule = async (entities: CollectionEntities[]) => {
   const module: TestingModule = await Test.createTestingModule({
@@ -85,7 +93,7 @@ describe('Collections', () => {
         fieldId: 'addressId',
       })
       .build()
-    class User extends Mix(DBUser, Entity) {
+    class User extends Mix(DBUser, Entity, Timestampable) {
       comments: Comment[];
       address: Address;
     }
@@ -347,6 +355,77 @@ describe('Collections', () => {
       // );
 
       // expect(address.user?.comments).toHaveLength(2);
+    });
+
+    it.only('should work with relational filtering', async () => {
+      const { getCollection } = await generateModule([
+        UserEntity,
+        CommentEntity,
+        AddressEntity,
+      ]);
+
+      const usersCollection = getCollection(UserEntity);
+
+      const addressCollection = getCollection(AddressEntity);
+
+      const commentsCollection = getCollection(CommentEntity);
+
+      const firstName = 'Andy';
+
+      const street = 'Baker';
+      const street2 = 'Baker 2';
+      const text = 'hi';
+
+      const { insertedId: addressId } = await addressCollection.insertOne({
+        street,
+      });
+
+      const { insertedId: addressId2 } = await addressCollection.insertOne({
+        street: street2,
+      });
+
+      const { insertedId: userId } = await usersCollection.insertOne({
+        firstName,
+        addressId,
+      });
+
+      const { insertedId: userId2 } = await usersCollection.insertOne({
+        firstName,
+        addressId: addressId2,
+      });
+
+      await commentsCollection.insertOne({
+        text,
+        postedById: userId,
+      });
+
+      await commentsCollection.insertOne({
+        text,
+        postedById: userId2,
+      });
+
+      const time = performance.now();
+      const result = await usersCollection.findRelational(
+        {
+          address: {
+            user: {
+              _id: userId,
+            },
+          },
+        },
+        {
+          comments: {
+            text: 1,
+            postedBy: {
+              firstName: 1,
+            },
+          },
+        },
+      );
+
+      console.log(performance.now() - time);
+
+      console.log(result);
     });
   });
 });

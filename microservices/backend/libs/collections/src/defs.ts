@@ -1,9 +1,17 @@
 import { Constructor } from '@app/core/defs';
+import { User } from '@app/users/users.entity';
 
 import { Collection } from './collections.class';
 
 import { ObjectId } from 'bson';
-import { FindOptions as BaseFindOptions, Document } from 'mongodb';
+import {
+  FindOptions as BaseFindOptions,
+  Condition,
+  Document,
+  PropertyType,
+  RootFilterOperators,
+  WithId,
+} from 'mongodb';
 import 'mongoose';
 
 export interface CollectionEntities<
@@ -13,6 +21,17 @@ export interface CollectionEntities<
   database: Constructor<DatabaseEntity>;
   relational?: Constructor<RelationalEntity>;
 }
+
+export const MONGODB_QUERY_OPERATORS = [
+  '$eq',
+  '$gte',
+  '$lte',
+  '$gt',
+  '$lt',
+  '$in',
+  '$ne',
+  '$nin',
+];
 
 export function createEntity<DatabaseEntity, RelationalEntity = DatabaseEntity>(
   input: CollectionEntities<DatabaseEntity, RelationalEntity>,
@@ -54,7 +73,7 @@ export type BehaviourFunction<T extends Document = any, OptionsType = any> = (
   options?: OptionsType,
 ) => AddBehaviourType<T>;
 
-export type CollectionRelationType<T> = {
+export type CollectionRelationType<T = any> = {
   entity: Constructor<T>;
 
   fieldId: string;
@@ -107,3 +126,11 @@ export interface Context {
 export interface DBContext {
   context?: Context;
 }
+
+export declare type SimpleFilter<TSchema> = {
+  [Property in keyof TSchema]?: TSchema[Property] extends (infer _)[]
+    ? SimpleFilter<Flatten<TSchema[Property]>>
+    : TSchema[Property] extends object
+    ? SimpleFilter<TSchema[Property]>
+    : Condition<TSchema[Property]>;
+} & RootFilterOperators<TSchema>;
