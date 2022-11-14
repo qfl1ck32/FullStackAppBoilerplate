@@ -347,7 +347,7 @@ describe('Collections', () => {
       // expect(address.user?.comments).toHaveLength(2);
     });
 
-    it.only('should work with relational filtering', async () => {
+    it('should work with relational filtering', async () => {
       const { getCollection } = await generateModule([
         UserEntity,
         CommentEntity,
@@ -426,6 +426,90 @@ describe('Collections', () => {
           },
         },
       ]);
+    });
+
+    it.only('should have good times, lol', async () => {
+      const { getCollection } = await generateModule([
+        UserEntity,
+        CommentEntity,
+        AddressEntity,
+      ]);
+
+      const usersCollection = getCollection(UserEntity);
+
+      const addressCollection = getCollection(AddressEntity);
+
+      const commentsCollection = getCollection(CommentEntity);
+
+      const firstName = 'Andy';
+
+      const street = 'Baker';
+      const street2 = 'Baker 2';
+      const text = 'hi';
+
+      const { insertedId: addressId } = await addressCollection.insertOne({
+        street,
+      });
+
+      const { insertedId: addressId2 } = await addressCollection.insertOne({
+        street: street2,
+      });
+
+      const { insertedId: userId } = await usersCollection.insertOne({
+        firstName,
+        addressId,
+      });
+
+      const { insertedId: userId2 } = await usersCollection.insertOne({
+        firstName,
+        addressId: addressId2,
+      });
+
+      await commentsCollection.insertOne({
+        text,
+        postedById: userId,
+      });
+
+      await commentsCollection.insertOne({
+        text,
+        postedById: userId2,
+      });
+
+      const times = [];
+
+      for (let i = 0; i < 200; ++i) {
+        const startTime = performance.now();
+
+        const result = await usersCollection.queryRelational(
+          {
+            address: {
+              user: {
+                _id: {
+                  $in: [userId],
+                },
+              },
+            },
+          },
+          {
+            _id: 1,
+
+            firstName: 1,
+
+            address: {
+              street: 1,
+            },
+          },
+        );
+
+        const endTime = performance.now();
+
+        times.push(endTime - startTime);
+      }
+
+      const timesMean =
+        times.reduce((prev, curr) => prev + curr, 0) / times.length;
+
+      console.log({ times, timesMean });
     });
   });
 });

@@ -426,15 +426,6 @@ export class Collection<
 
     await this._queryRelationalRec(filters, [], pipeline, this);
 
-    // TODO: does it make sense? we need to clean it up, though
-    // pipeline.push({
-    //   $project: {
-    //     _id: 1,
-    //   },
-    // });
-
-    console.log(pipeline);
-
     const documents = await this.aggregate(pipeline).toArray();
 
     const promises = [];
