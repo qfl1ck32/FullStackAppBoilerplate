@@ -1,4 +1,9 @@
 import { Module } from '@nestjs/common';
 
-@Module({})
+import { CollectionsStorage } from './collections.storage';
+
+@Module({
+  providers: [CollectionsStorage],
+  exports: [CollectionsStorage],
+})
 export class CollectionsModule {}

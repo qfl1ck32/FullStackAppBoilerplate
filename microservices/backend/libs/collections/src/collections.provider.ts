@@ -5,6 +5,7 @@ import { DatabaseService } from '@app/database';
 import { EventManagerService } from '@app/event-manager';
 
 import { Collection } from './collections.class';
+import { CollectionsStorage } from './collections.storage';
 import { getCollectionToken } from './defs';
 
 export function ProvideCollection<T>(entity: Constructor<T>) {
@@ -12,12 +13,22 @@ export function ProvideCollection<T>(entity: Constructor<T>) {
     provide: getCollectionToken(entity),
 
     useFactory: (
+      collectionsStorage: CollectionsStorage,
       databaseService: DatabaseService,
       eventManager: EventManagerService,
     ) => {
-      return new Collection(entity, databaseService, eventManager);
+      const collection = new Collection(
+        entity,
+        collectionsStorage,
+        databaseService,
+        eventManager,
+      );
+
+      collectionsStorage.add(collection);
+
+      return collection;
     },
 
-    inject: [DatabaseService, EventManagerService],
+    inject: [CollectionsStorage, DatabaseService, EventManagerService],
   } as Provider;
 }

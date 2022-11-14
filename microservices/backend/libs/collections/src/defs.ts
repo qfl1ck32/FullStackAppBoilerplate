@@ -3,7 +3,7 @@ import { Constructor } from '@app/core/defs';
 import { Collection } from './collections.class';
 
 import { ObjectId } from 'bson';
-import { Document } from 'mongodb';
+import { FindOptions as BaseFindOptions, Document } from 'mongodb';
 import 'mongoose';
 
 export function getCollectionToken<T>(entity: Constructor<T>) {
@@ -36,7 +36,10 @@ export type BehaviourFunction<T extends Document = any, OptionsType = any> = (
 ) => AddBehaviourType<T>;
 
 export type CollectionRelationType<T> = {
-  collectionName: string;
+  entity: Constructor<T>;
+
+  fieldId: string;
+
   isArray: boolean;
 
   inversedBy?: string;
@@ -48,7 +51,9 @@ export type SimpleFieldValue = 1 | true;
 
 export type Flatten<T> = T extends (infer U)[] ? U : T;
 
-export type QueryBodyType<T> = {
+export type FindOptions = Pick<BaseFindOptions, 'skip' | 'limit' | 'sort'>;
+
+export type QueryBodyType<T> = { _options?: FindOptions } & {
   [K in keyof T]?: T[K] extends string
     ? SimpleFieldValue
     : SimpleFieldValue | QueryBodyType<Flatten<T[K]>>;
@@ -70,6 +75,10 @@ export interface RelationArgs<From = any, To = any> {
   inversedBy?: keyof To extends string ? keyof To : string;
 
   isArray?: boolean;
+}
+
+export interface Reducer<T> {
+  dependency: QueryBodyType<T>;
 }
 
 export interface Context {

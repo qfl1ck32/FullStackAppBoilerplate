@@ -15,11 +15,13 @@ import { BeforeUpdateEvent } from './events/before-update.event';
 
 import { getBehaviours } from './behaviours/utils';
 import { getRelations } from './collections.decorators';
+import { CollectionsStorage } from './collections.storage';
 import {
   AddBehaviourType,
   CollectionRelationType,
   CollectionRelations,
   DBContext,
+  FindOptions,
   ObjectId,
   QueryBodyType,
   RelationArgs,
@@ -30,22 +32,25 @@ import {
   Document,
   Filter,
   FindOneAndDeleteOptions,
-  FindOptions,
   InsertOneOptions,
   OptionalUnlessRequiredId,
   UpdateFilter,
   UpdateOptions,
+  WithId,
 } from 'mongodb';
 import { Collection as BaseCollection } from 'mongoose';
 import * as pluralize from 'pluralize';
 import { Mixin, decorate } from 'ts-mixer';
 
+// TODO: add another type, like "DB Type", and same goes for all entities
+// reason being, e.g. for insert, we don't want to see fields that are relations or reducers.
 @Injectable()
 export class Collection<T = any> extends BaseCollection<T> {
   private _relations: CollectionRelations<T>;
 
   constructor(
     public entity: Constructor<T>,
+    private collectionsStorage: CollectionsStorage,
     public readonly databaseService: DatabaseService,
     public readonly eventManager: EventManagerService,
   ) {
@@ -64,22 +69,24 @@ export class Collection<T = any> extends BaseCollection<T> {
     this._initialiseRelations(relations);
   }
 
-  public _loadBehaviours(behaviours: AddBehaviourType[]) {
+  private _loadBehaviours(behaviours: AddBehaviourType[]) {
     behaviours.forEach((behaviour) => behaviour(this));
   }
 
-  public async _initialiseRelations(relations: RelationArgs[]) {
+  private async _initialiseRelations(relations: RelationArgs[]) {
     // TODO: validation, make sure the call doesn't return undefined
 
     for (const relation of relations) {
-      const { isArray, to, inversedBy } = relation;
+      const { isArray, to, inversedBy, field, fieldId } = relation;
 
       const entity = to();
 
-      this._relations[relation.field as keyof T] = {
-        collectionName: getCollectionName(entity),
+      // TODO: types?
+      this._relations[field as any] = {
+        entity,
         isArray,
         inversedBy,
+        fieldId,
       };
     }
   }
@@ -122,7 +129,13 @@ export class Collection<T = any> extends BaseCollection<T> {
 
   // @ts-ignore
   async findOne(filter: Filter<T>, options: FindOptions<Document> = {}) {
-    return super.findOne(filter, options);
+    // @ts-ignore ??
+    return super.findOne(filter, options) as WithId<T>;
+  }
+
+  // @ts-ignore
+  public find(filter: Filter<T>, options?: FindOptions<Document>) {
+    return super.find(filter, options);
   }
 
   // @ts-ignore
@@ -218,47 +231,61 @@ export class Collection<T = any> extends BaseCollection<T> {
   }
 
   // TODO: types
-  public async _queryOneRec<T>(body: QueryBodyType<T>, document: any) {
+  private async _findRelationalRec<T>(
+    body: QueryBodyType<T>,
+    document: WithId<T>,
+  ) {
     for (const key in body) {
       const relation = this._relations[key as any] as CollectionRelationType<T>;
 
       if (!relation) continue;
 
-      const { collectionName, isArray, inversedBy } = relation;
+      const { entity, isArray, inversedBy, fieldId } = relation;
 
-      console.log({ inversedBy });
-
-      const collection =
-        this.databaseService.connection.collection(collectionName);
+      const collection = this.collectionsStorage.get(entity);
 
       let result: any;
 
       const filters = {
-        _id: document._id,
+        [inversedBy ?? '_id']: document[fieldId],
       } as Filter<T>;
 
       if (isArray) {
-        result = await collection.find(filters).toArray();
+        result = await collection.findRelational(filters, body[key as any]);
       } else {
-        result = await collection.findOne(filters);
+        result = await collection.findOneRelational(filters, body[key as any]);
       }
 
       document[key as any] = result;
 
-      console.log({ key, finalData: document, body });
-
-      await this._queryOneRec(body[key as any], document[key]);
+      await this._findRelationalRec(body[key as any], document[key as any]);
     }
   }
 
-  async queryOne(filters: Filter<T>, body: QueryBodyType<T>) {
-    let document = await this.findOne(filters, body);
+  async findOneRelational(filters: Filter<T>, body: QueryBodyType<T>) {
+    let document = await this.findOne(filters, body._options);
 
     if (document) {
-      await this._queryOneRec(body, document);
+      await this._findRelationalRec(body, document);
     }
 
     return document;
+  }
+
+  async findRelational(filters: Filter<T>, body: QueryBodyType<T>) {
+    // TODO: should use projection, theoretically
+    // Or, if it's faster, just clean the query up after the result :)
+    let documents = await this.find(filters, body._options).toArray();
+
+    const promises = [];
+
+    for (const document of documents) {
+      promises.push(this._findRelationalRec(body, document));
+    }
+
+    await Promise.all(promises);
+
+    return documents;
   }
 }
 
