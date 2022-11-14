@@ -2,7 +2,8 @@ import { Inject, applyDecorators } from '@nestjs/common';
 
 import { Constructor, Decorator } from '@app/core/defs';
 
-import { RelationArgs, getCollectionToken } from './defs';
+import { RelationArgs } from './defs';
+import { getCollectionToken } from './utils';
 
 export function InjectCollection<T>(entity: Constructor<T>) {
   return Inject(getCollectionToken(entity));

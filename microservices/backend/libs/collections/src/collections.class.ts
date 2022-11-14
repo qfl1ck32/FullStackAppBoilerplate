@@ -23,12 +23,12 @@ import {
   CollectionRelations,
   DBContext,
   FindOptions,
-  MONGODB_QUERY_OPERATORS,
   ObjectId,
   QueryBodyType,
   RelationArgs,
   SimpleFilter,
 } from './defs';
+import { MONGODB_QUERY_OPERATORS, cleanDocuments } from './utils';
 
 import {
   DeleteOptions,
@@ -143,7 +143,7 @@ export class Collection<
   // @ts-ignore
   async findOne(filter: Filter<DBEntity>, options: FindOptions = {}) {
     // @ts-ignore ??
-    return super.findOne(filter, options) as WithId<DBEntity>;
+    return super.findOne(filter, options) as DBEntity;
   }
 
   // @ts-ignore
@@ -261,10 +261,6 @@ export class Collection<
     for (const key in body) {
       const relation = this._relations[key as any] as CollectionRelationType<T>;
 
-      if (document[key]) {
-        continue;
-      }
-
       if (!relation) continue;
 
       const { entity, isArray, inversedBy, fieldId } = relation;
@@ -316,7 +312,8 @@ export class Collection<
     return documents;
   }
 
-  async _findRelationalRec(
+  // TODO: types
+  async _queryRelationalRec(
     filters: SimpleFilter<Entity>,
     currentPath: string[],
     pipeline: Document[],
@@ -329,11 +326,15 @@ export class Collection<
         currentFieldName += '.';
       }
 
-      const value = filters[field];
+      const value = filters[field] as any;
 
       const key = Object.keys(value)[0];
 
-      if (typeof value !== 'object' || MONGODB_QUERY_OPERATORS.includes(key)) {
+      if (
+        typeof value !== 'object' ||
+        value instanceof ObjectId ||
+        MONGODB_QUERY_OPERATORS.includes(key)
+      ) {
         pipeline.push({
           $match: {
             [`${currentFieldName}${field}`]: value,
@@ -351,12 +352,22 @@ export class Collection<
         const documents = [] as Document[];
 
         if (fieldId) {
+          const as = `${currentFieldName}${field}`;
+
           documents.push({
             $lookup: {
               from: getCollectionName(entity),
               localField: `${currentFieldName}${fieldId}`,
               foreignField: `_id`,
-              as: `${currentFieldName}${field}`,
+              as,
+
+              pipeline: [
+                {
+                  $project: {
+                    [`${as}._id`]: 1,
+                  },
+                },
+              ],
             },
           });
         } else if (inversedBy) {
@@ -365,12 +376,23 @@ export class Collection<
           const inversedRelation =
             inversedCollection._relations[relation.inversedBy];
 
+          const foreignField = `${inversedRelation.fieldId}`;
+          const as = `${currentFieldName}${field}`;
+
           documents.push({
             $lookup: {
               from: getCollectionName(entity),
               localField: `${currentFieldName}_id`,
-              foreignField: `${inversedRelation.fieldId}`,
-              as: `${currentFieldName}${field}`,
+              foreignField,
+              as,
+
+              pipeline: [
+                {
+                  $project: {
+                    [`${as}.${foreignField}`]: 1,
+                  },
+                },
+              ],
             },
           });
         }
@@ -386,7 +408,7 @@ export class Collection<
 
         pipeline.push(...documents);
 
-        await this._findRelationalRec(
+        await this._queryRelationalRec(
           value,
           currentPath.concat(field),
           pipeline,
@@ -396,28 +418,43 @@ export class Collection<
     }
   }
 
-  async findRelational(
+  async queryRelational(
     filters: SimpleFilter<Entity>,
     body: QueryBodyType<Entity>,
   ) {
     const pipeline: Document[] = [];
 
-    await this._findRelationalRec(filters, [], pipeline, this);
+    await this._queryRelationalRec(filters, [], pipeline, this);
 
-    const documents = await this.aggregate([]).toArray();
+    // TODO: does it make sense? we need to clean it up, though
+    // pipeline.push({
+    //   $project: {
+    //     _id: 1,
+    //   },
+    // });
+
+    console.log(pipeline);
+
+    const documents = await this.aggregate(pipeline).toArray();
+
+    const promises = [];
 
     for (const document of documents) {
-      await this._queryRec(body, document);
+      promises.push(this._queryRec(body, document));
     }
 
-    return documents;
+    await Promise.all(promises);
+
+    await cleanDocuments(documents, body);
+
+    return documents as Entity[];
   }
 
-  async findOneRelational(
+  async queryOneRelational(
     filters: SimpleFilter<Entity>,
     body: QueryBodyType<Entity>,
   ) {
-    const results = await this.findRelational(filters, body);
+    const results = await this.queryRelational(filters, body);
 
     return results[0];
   }

@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthModule, AuthService } from '@app/auth';
 import { RegisterUserInput } from '@app/auth/dto/register.input';
 
+import { User } from './users.entity';
 import { UsersModule } from './users.module';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
@@ -39,7 +40,7 @@ describe('UsersResolver', () => {
 
     const user = await usersService.collection.findOne({ _id: userId });
 
-    const roles = await resolver.roles(user);
+    const roles = await resolver.roles(user as User);
 
     expect(roles).not.toHaveLength(0);
   });

@@ -5,9 +5,10 @@ import { Blameable } from '@app/collections/behaviours/blameable.behaviour';
 import { Softdeletable } from '@app/collections/behaviours/softdeletable.behaviour';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { Entity, Mix } from '@app/collections/collections.class';
-import { ObjectId, createEntity } from '@app/collections/defs';
+import { ObjectId } from '@app/collections/defs';
+import { createEntity } from '@app/collections/utils';
 
-export class DBPermission {
+export class DBPermission extends Entity {
   @Prop()
   permission: string;
 
@@ -21,10 +22,12 @@ export class DBPermission {
 @Schema()
 export class Permission extends Mix(
   DBPermission,
-  Entity,
   Timestampable,
   Softdeletable,
   Blameable,
 ) {}
 
-export const PermissionEntity = createEntity(DBPermission, Permission);
+export const PermissionEntity = createEntity({
+  database: DBPermission,
+  relational: Permission,
+});

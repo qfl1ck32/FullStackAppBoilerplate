@@ -11,17 +11,23 @@ import { Timestampable } from './timestampable.behaviour';
 
 import { Collection } from '../collections.class';
 import { ProvideCollection } from '../collections.provider';
-import { ObjectId, getCollectionToken } from '../defs';
+import { CollectionEntities, ObjectId } from '../defs';
 import { UserMissingException } from '../exceptions/user-missing.exception';
+import { createEntity, getCollectionToken } from '../utils';
 
-async function getCollectionAndEventManager<T>(entity: Constructor<T>) {
+// TODO: make just one, for testing? somehow?
+async function getCollectionAndEventManager<DatabaseEntity, RelationalEntity>(
+  entities: CollectionEntities<DatabaseEntity, RelationalEntity>,
+) {
   const module: TestingModule = await Test.createTestingModule({
     imports: [DatabaseModule, ConfigModule, EventManagerModule],
 
-    providers: [ProvideCollection(entity)],
+    providers: [ProvideCollection(entities)],
   }).compile();
 
-  const collection = module.get<Collection<T>>(getCollectionToken(entity));
+  const collection = module.get<Collection<DatabaseEntity, RelationalEntity>>(
+    getCollectionToken(entities.relational),
+  );
 
   const eventManager = module.get(EventManagerService);
 
@@ -34,7 +40,12 @@ describe('Behaviours', () => {
     class User extends Timestampable {
       firstName: string;
     }
-    const { collection } = await getCollectionAndEventManager(User);
+
+    const UserEntity = createEntity({
+      database: User,
+    });
+
+    const { collection } = await getCollectionAndEventManager(UserEntity);
 
     const result = await collection.insertOne({
       firstName: 'hi',
@@ -52,8 +63,11 @@ describe('Behaviours', () => {
     class User extends Softdeletable {
       firstName: string;
     }
+    const UserEntity = createEntity({
+      database: User,
+    });
 
-    const { collection } = await getCollectionAndEventManager(User);
+    const { collection } = await getCollectionAndEventManager(UserEntity);
 
     const result = await collection.insertOne({
       firstName: 'hi',
@@ -76,7 +90,12 @@ describe('Behaviours', () => {
     class User extends Blameable {
       firstName: string;
     }
-    const { collection } = await getCollectionAndEventManager(User);
+
+    const UserEntity = createEntity({
+      database: User,
+    });
+
+    const { collection } = await getCollectionAndEventManager(UserEntity);
 
     await expect(collection.insertOne({ firstName: 'Andy' })).rejects.toThrow(
       new UserMissingException(),

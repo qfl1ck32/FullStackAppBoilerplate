@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { Constructor } from '@app/core/defs';
 
 import { Collection } from './collections.class';
-import { CollectionEntities } from './defs';
 
 @Injectable()
 export class CollectionsStorage {

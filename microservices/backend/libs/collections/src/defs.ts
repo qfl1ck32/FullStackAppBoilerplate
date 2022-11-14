@@ -1,16 +1,15 @@
 import { Constructor } from '@app/core/defs';
-import { User } from '@app/users/users.entity';
 
 import { Collection } from './collections.class';
 
 import { ObjectId } from 'bson';
 import {
+  BSONRegExp,
+  BSONType,
+  BSONTypeAlias,
   FindOptions as BaseFindOptions,
-  Condition,
+  BitwiseFilter,
   Document,
-  PropertyType,
-  RootFilterOperators,
-  WithId,
 } from 'mongodb';
 import 'mongoose';
 
@@ -20,32 +19,6 @@ export interface CollectionEntities<
 > {
   database: Constructor<DatabaseEntity>;
   relational?: Constructor<RelationalEntity>;
-}
-
-export const MONGODB_QUERY_OPERATORS = [
-  '$eq',
-  '$gte',
-  '$lte',
-  '$gt',
-  '$lt',
-  '$in',
-  '$ne',
-  '$nin',
-];
-
-export function createEntity<DatabaseEntity, RelationalEntity = DatabaseEntity>(
-  input: CollectionEntities<DatabaseEntity, RelationalEntity>,
-) {
-  const { database, relational } = input;
-
-  return {
-    database,
-    relational: relational ?? database,
-  } as CollectionEntities<DatabaseEntity, RelationalEntity>;
-}
-
-export function getCollectionToken<T>(entity: Constructor<T>) {
-  return `${entity.name}Collection`;
 }
 
 // MAGIC :)
@@ -127,10 +100,54 @@ export interface DBContext {
   context?: Context;
 }
 
-export declare type SimpleFilter<TSchema> = {
-  [Property in keyof TSchema]?: TSchema[Property] extends (infer _)[]
-    ? SimpleFilter<Flatten<TSchema[Property]>>
-    : TSchema[Property] extends object
-    ? SimpleFilter<TSchema[Property]>
-    : Condition<TSchema[Property]>;
-} & RootFilterOperators<TSchema>;
+export declare interface FilterOperators<TValue> {
+  $eq?: TValue;
+  $gt?: TValue;
+  $gte?: TValue;
+  $in?: ReadonlyArray<TValue>;
+  $lt?: TValue;
+  $lte?: TValue;
+  $ne?: TValue;
+  $nin?: ReadonlyArray<TValue>;
+  $not?: TValue extends string
+    ? FilterOperators<TValue> | RegExp
+    : FilterOperators<TValue>;
+  /**
+   * When `true`, `$exists` matches the documents that contain the field,
+   * including documents where the field value is null.
+   */
+  $exists?: boolean;
+  $type?: BSONType | BSONTypeAlias;
+  $expr?: Record<string, any>;
+  $jsonSchema?: Record<string, any>;
+  $mod?: TValue extends number ? [number, number] : never;
+  $regex?: TValue extends string ? RegExp | BSONRegExp | string : never;
+  $options?: TValue extends string ? string : never;
+  $geoIntersects?: {
+    $geometry: Document;
+  };
+  $geoWithin?: Document;
+  $near?: Document;
+  $nearSphere?: Document;
+  $maxDistance?: number;
+  $all?: ReadonlyArray<any>;
+  $elemMatch?: Document;
+  $size?: TValue extends ReadonlyArray<any> ? number : never;
+  $bitsAllClear?: BitwiseFilter;
+  $bitsAllSet?: BitwiseFilter;
+  $bitsAnyClear?: BitwiseFilter;
+  $bitsAnySet?: BitwiseFilter;
+  $rand?: Record<string, never>;
+}
+
+export declare type SimpleFilter<TSchema> = TSchema extends
+  | string
+  | number
+  | Date
+  | ObjectId
+  ? FilterOperators<TSchema> | TSchema
+  : {
+      [Property in keyof TSchema]?: TSchema[Property] extends (infer _)[]
+        ? SimpleFilter<Flatten<TSchema[Property]>>
+        : SimpleFilter<TSchema[Property]>;
+    };

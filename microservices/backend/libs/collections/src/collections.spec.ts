@@ -2,26 +2,16 @@ import { Schema } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigModule } from '@app/config';
-import { Constructor } from '@app/core/defs';
 import { DatabaseModule } from '@app/database';
 import { EventManagerModule } from '@app/event-manager';
 
 import { Timestampable } from './behaviours/timestampable.behaviour';
-import {
-  Collection,
-  Entity,
-  Mix,
-  getCollectionName,
-} from './collections.class';
+import { Collection, Entity, Mix } from './collections.class';
 import { Relations } from './collections.decorators';
 import { CollectionsModule } from './collections.module';
 import { ProvideCollection } from './collections.provider';
-import {
-  CollectionEntities,
-  ObjectId,
-  createEntity,
-  getCollectionToken,
-} from './defs';
+import { CollectionEntities, ObjectId } from './defs';
+import { createEntity, getCollectionToken } from './utils';
 
 import { performance } from 'node:perf_hooks';
 
@@ -73,7 +63,7 @@ describe('Collections', () => {
   });
 
   describe('Relations, simple queries', () => {
-    class DBUser {
+    class DBUser extends Entity {
       firstName: string;
 
       addressId: ObjectId;
@@ -93,7 +83,7 @@ describe('Collections', () => {
         fieldId: 'addressId',
       })
       .build()
-    class User extends Mix(DBUser, Entity, Timestampable) {
+    class User extends Mix(DBUser, Timestampable) {
       comments: Comment[];
       address: Address;
     }
@@ -404,28 +394,38 @@ describe('Collections', () => {
         postedById: userId2,
       });
 
-      const time = performance.now();
-      const result = await usersCollection.findRelational(
+      const result = await usersCollection.queryRelational(
         {
           address: {
             user: {
-              _id: userId,
+              _id: {
+                $in: [userId],
+              },
             },
           },
         },
         {
-          comments: {
-            text: 1,
-            postedBy: {
-              firstName: 1,
-            },
+          _id: 1,
+
+          firstName: 1,
+
+          address: {
+            street: 1,
           },
         },
       );
 
-      console.log(performance.now() - time);
+      expect(result).toStrictEqual([
+        {
+          _id: userId,
+          firstName,
 
-      console.log(result);
+          address: {
+            _id: addressId,
+            street,
+          },
+        },
+      ]);
     });
   });
 });

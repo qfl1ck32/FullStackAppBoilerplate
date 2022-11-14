@@ -7,7 +7,8 @@ import { Timestampable } from '@app/collections/behaviours/timestampable.behavio
 import { AddBehaviour } from '@app/collections/behaviours/utils';
 import { Collection, Entity, Mix } from '@app/collections/collections.class';
 import { Relations } from '@app/collections/collections.decorators';
-import { ObjectId, createEntity } from '@app/collections/defs';
+import { ObjectId } from '@app/collections/defs';
+import { createEntity } from '@app/collections/utils';
 import { Role } from '@app/permissions/defs';
 
 export class UserPassword {
@@ -20,7 +21,7 @@ export class UserPassword {
   emailVerificationToken?: string;
 }
 
-export class DBUser {
+export class DBUser extends Entity {
   @Field(() => String)
   @Prop()
   firstName: string;
@@ -64,7 +65,7 @@ export class DBUser {
     to: () => User,
   })
   .build()
-export class User extends Mix(DBUser, Entity, Timestampable) {
+export class User extends Mix(DBUser, Timestampable) {
   // TODO: we have to manually assign blameable and softdeletable, sadly,
   // because of circular dependency
 

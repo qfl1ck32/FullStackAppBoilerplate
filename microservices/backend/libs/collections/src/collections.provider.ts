@@ -6,7 +6,8 @@ import { EventManagerService } from '@app/event-manager';
 
 import { Collection } from './collections.class';
 import { CollectionsStorage } from './collections.storage';
-import { CollectionEntities, getCollectionToken } from './defs';
+import { CollectionEntities } from './defs';
+import { getCollectionToken } from './utils';
 
 export function ProvideCollection<DBEntityType, EntityType>(
   entities: CollectionEntities<DBEntityType, EntityType>,
