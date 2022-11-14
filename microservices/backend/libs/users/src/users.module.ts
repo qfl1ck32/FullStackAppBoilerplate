@@ -6,7 +6,7 @@ import { DatabaseModule } from '@app/database';
 import { PermissionsModule } from '@app/permissions';
 
 import { UsersSecurityService } from './users-security.service';
-import { User } from './users.entity';
+import { UserEntity } from './users.entity';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
   providers: [
     UsersService,
     UsersSecurityService,
-    ProvideCollection(User),
+    ProvideCollection(UserEntity),
     UsersResolver,
   ],
   exports: [UsersService, UsersSecurityService],

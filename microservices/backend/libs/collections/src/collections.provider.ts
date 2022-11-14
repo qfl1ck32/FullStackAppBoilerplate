@@ -6,9 +6,13 @@ import { EventManagerService } from '@app/event-manager';
 
 import { Collection } from './collections.class';
 import { CollectionsStorage } from './collections.storage';
-import { getCollectionToken } from './defs';
+import { CollectionEntities, getCollectionToken } from './defs';
 
-export function ProvideCollection<T>(entity: Constructor<T>) {
+export function ProvideCollection<DBEntityType, EntityType>(
+  entities: CollectionEntities<DBEntityType, EntityType>,
+) {
+  const { relational: entity } = entities;
+
   return {
     provide: getCollectionToken(entity),
 
@@ -18,7 +22,7 @@ export function ProvideCollection<T>(entity: Constructor<T>) {
       eventManager: EventManagerService,
     ) => {
       const collection = new Collection(
-        entity,
+        entities,
         collectionsStorage,
         databaseService,
         eventManager,

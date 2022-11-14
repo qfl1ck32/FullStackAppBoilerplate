@@ -5,8 +5,13 @@ import { Context } from '../defs';
 
 import { OptionalUnlessRequiredId } from 'mongodb';
 
-export class BeforeInsertEvent<T = any> extends Event<{
-  collection: Collection<T>;
-  document: Partial<OptionalUnlessRequiredId<T>>;
+export class BeforeInsertEvent<
+  DBEntityType,
+  EntityType = DBEntityType,
+> extends Event<{
+  collection: Collection<DBEntityType, EntityType>;
+
+  document: Partial<OptionalUnlessRequiredId<DBEntityType>>;
+
   context?: Context;
 }> {}

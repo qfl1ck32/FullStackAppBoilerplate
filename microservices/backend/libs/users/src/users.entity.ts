@@ -5,9 +5,9 @@ import { blameable } from '@app/collections/behaviours/blameable.behaviour.funct
 import { softdeletable } from '@app/collections/behaviours/softdeletable.behaviour.function';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { AddBehaviour } from '@app/collections/behaviours/utils';
-import { Entity, Mix } from '@app/collections/collections.class';
+import { Collection, Entity, Mix } from '@app/collections/collections.class';
 import { Relations } from '@app/collections/collections.decorators';
-import { ObjectId } from '@app/collections/defs';
+import { ObjectId, createEntity } from '@app/collections/defs';
 import { Role } from '@app/permissions/defs';
 
 export class UserPassword {
@@ -18,6 +18,30 @@ export class UserPassword {
   requiresEmailValidation: boolean;
 
   emailVerificationToken?: string;
+}
+
+export class DBUser {
+  @Field(() => String)
+  @Prop()
+  firstName: string;
+
+  @Field(() => String)
+  @Prop()
+  lastName: string;
+
+  @Field(() => String)
+  @Prop()
+  username: string;
+
+  @Field(() => String)
+  @Prop()
+  email: string;
+
+  @Field(() => [Role])
+  roles: Role[];
+
+  @Prop()
+  password: UserPassword;
 }
 
 @ObjectType()
@@ -40,35 +64,14 @@ export class UserPassword {
     to: () => User,
   })
   .build()
-export class User extends Mix(Entity, Timestampable) {
-  @Field(() => String)
-  @Prop()
-  firstName: string;
-
-  @Field(() => String)
-  @Prop()
-  lastName: string;
-
-  @Field(() => String)
-  @Prop()
-  username: string;
-
-  @Field(() => String)
-  @Prop()
-  email: string;
-
-  @Field(() => [Role])
-  roles: Role[];
-
-  @Prop()
-  password: UserPassword;
-
+export class User extends Mix(DBUser, Entity, Timestampable) {
   // TODO: we have to manually assign blameable and softdeletable, sadly,
   // because of circular dependency
 
   /**
    * Softdeletable
    */
+
   @Field(() => Boolean, { nullable: true })
   @Prop()
   isDeleted?: boolean;
@@ -87,6 +90,7 @@ export class User extends Mix(Entity, Timestampable) {
   /**
    * Blameable
    */
+
   @Field(() => ID, { nullable: true })
   @Prop()
   createdByUserId?: ObjectId;
@@ -98,3 +102,10 @@ export class User extends Mix(Entity, Timestampable) {
 // TODO: this should happen in another place, because you might wanna change "Role".
 // Same goes for the users collection
 registerEnumType(Role, { name: 'Role' });
+
+export const UserEntity = createEntity({
+  database: DBUser,
+  relational: User,
+});
+
+export type UsersCollection = Collection<DBUser, User>;

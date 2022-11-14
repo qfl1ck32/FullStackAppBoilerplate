@@ -5,12 +5,15 @@ import { Context } from '../defs';
 
 import { DeleteResult, Filter } from 'mongodb';
 
-export class AfterDeleteEvent<T = any> extends Event<{
-  collection: Collection<T>;
+export class AfterDeleteEvent<
+  DBEntityType,
+  EntityType = DBEntityType,
+> extends Event<{
+  collection: Collection<DBEntityType, EntityType>;
 
   context?: Context;
 
-  filter: Filter<T>;
+  filter: Filter<EntityType>;
 
   deleteResult: DeleteResult;
 }> {}

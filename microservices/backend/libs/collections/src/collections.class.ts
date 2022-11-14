@@ -18,6 +18,7 @@ import { getRelations } from './collections.decorators';
 import { CollectionsStorage } from './collections.storage';
 import {
   AddBehaviourType,
+  CollectionEntities,
   CollectionRelationType,
   CollectionRelations,
   DBContext,
@@ -45,15 +46,20 @@ import { Mixin, decorate } from 'ts-mixer';
 // TODO: add another type, like "DB Type", and same goes for all entities
 // reason being, e.g. for insert, we don't want to see fields that are relations or reducers.
 @Injectable()
-export class Collection<T = any> extends BaseCollection<T> {
-  private _relations: CollectionRelations<T>;
+export class Collection<
+  DBEntity = any,
+  Entity = DBEntity,
+> extends BaseCollection<DBEntity> {
+  private _relations: CollectionRelations<DBEntity>;
 
   constructor(
-    public entity: Constructor<T>,
+    public entities: CollectionEntities<DBEntity, Entity>,
     private collectionsStorage: CollectionsStorage,
     public readonly databaseService: DatabaseService,
     public readonly eventManager: EventManagerService,
   ) {
+    const { relational: entity } = entities;
+
     const behaviours = getBehaviours(entity);
     const relations = getRelations(entity);
 
@@ -62,7 +68,7 @@ export class Collection<T = any> extends BaseCollection<T> {
     super(name, databaseService.connection, {});
 
     // TODO: why "as"? can't TS infer that {} is a subtype of CollectionRelations<T>?
-    this._relations = {} as CollectionRelations<T>;
+    this._relations = {} as CollectionRelations<DBEntity>;
 
     this._loadBehaviours(behaviours);
 
@@ -91,7 +97,7 @@ export class Collection<T = any> extends BaseCollection<T> {
     }
   }
 
-  async exists(filter: Filter<T>) {
+  async exists(filter: Filter<DBEntity>) {
     const count = await super.count(filter);
 
     return count > 0;
@@ -100,7 +106,7 @@ export class Collection<T = any> extends BaseCollection<T> {
   // TODO: we need to do this because of the types in "mongodb"... something about callbacks & deprecation & idk.
   // @ts-ignore
   async insertOne(
-    document: Partial<OptionalUnlessRequiredId<T>>,
+    document: Partial<OptionalUnlessRequiredId<DBEntity>>,
     options: InsertOneOptions & DBContext = {},
   ) {
     const { context, ...mongoOptions } = options;
@@ -113,6 +119,7 @@ export class Collection<T = any> extends BaseCollection<T> {
       }),
     );
 
+    // TODO: type
     const insertResult = await super.insertOne(document as any, mongoOptions);
 
     await this.eventManager.emit(
@@ -128,19 +135,19 @@ export class Collection<T = any> extends BaseCollection<T> {
   }
 
   // @ts-ignore
-  async findOne(filter: Filter<T>, options: FindOptions<Document> = {}) {
+  async findOne(filter: Filter<DBEntity>, options: FindOptions = {}) {
     // @ts-ignore ??
-    return super.findOne(filter, options) as WithId<T>;
+    return super.findOne(filter, options) as WithId<DBEntity>;
   }
 
   // @ts-ignore
-  public find(filter: Filter<T>, options?: FindOptions<Document>) {
+  public find(filter: Filter<DBEntity>, options: FindOptions = {}) {
     return super.find(filter, options);
   }
 
   // @ts-ignore
   async findOneAndDelete(
-    filter: Filter<T>,
+    filter: Filter<Entity>,
     options: FindOneAndDeleteOptions & DBContext = {},
   ) {
     const { context, ...mongoOptions } = options;
@@ -153,7 +160,11 @@ export class Collection<T = any> extends BaseCollection<T> {
       }),
     );
 
-    const modifyResult = await super.findOneAndDelete(filter, mongoOptions);
+    // TODO: relatorelational filtering
+    const modifyResult = await super.findOneAndDelete(
+      filter as any,
+      mongoOptions,
+    );
 
     await this.eventManager.emit(
       new AfterDeleteEvent({
@@ -174,8 +185,8 @@ export class Collection<T = any> extends BaseCollection<T> {
 
   // @ts-ignore
   async updateOne(
-    filter: Filter<T>,
-    update: UpdateFilter<T>,
+    filter: Filter<Entity>,
+    update: UpdateFilter<DBEntity>,
     options: UpdateOptions & DBContext = {},
   ) {
     const { context, ...mongoOptions } = options;
@@ -189,7 +200,12 @@ export class Collection<T = any> extends BaseCollection<T> {
       }),
     );
 
-    const updateResult = await super.updateOne(filter, update, mongoOptions);
+    // TODO: types
+    const updateResult = await super.updateOne(
+      filter as any,
+      update,
+      mongoOptions,
+    );
 
     await this.eventManager.emit(
       new AfterUpdateEvent({
@@ -205,7 +221,10 @@ export class Collection<T = any> extends BaseCollection<T> {
   }
 
   // @ts-ignore
-  async deleteOne(filter: Filter<T>, options: DeleteOptions & DBContext = {}) {
+  async deleteOne(
+    filter: Filter<Entity>,
+    options: DeleteOptions & DBContext = {},
+  ) {
     const { context, ...mongoOptions } = options;
 
     await this.eventManager.emit(
@@ -216,7 +235,8 @@ export class Collection<T = any> extends BaseCollection<T> {
       }),
     );
 
-    const deleteResult = await super.deleteOne(filter, mongoOptions);
+    // TODO: types
+    const deleteResult = await super.deleteOne(filter as any, mongoOptions);
 
     await this.eventManager.emit(
       new AfterDeleteEvent({
@@ -231,10 +251,7 @@ export class Collection<T = any> extends BaseCollection<T> {
   }
 
   // TODO: types
-  private async _findRelationalRec<T>(
-    body: QueryBodyType<T>,
-    document: WithId<T>,
-  ) {
+  private async _findRelationalRec<T>(body: QueryBodyType<T>, document: any) {
     for (const key in body) {
       const relation = this._relations[key as any] as CollectionRelationType<T>;
 
@@ -251,9 +268,9 @@ export class Collection<T = any> extends BaseCollection<T> {
       } as Filter<T>;
 
       if (isArray) {
-        result = await collection.findRelational(filters, body[key as any]);
+        result = await collection.query(filters, body[key as any]);
       } else {
-        result = await collection.findOneRelational(filters, body[key as any]);
+        result = await collection.queryOne(filters, body[key as any]);
       }
 
       document[key as any] = result;
@@ -262,17 +279,18 @@ export class Collection<T = any> extends BaseCollection<T> {
     }
   }
 
-  async findOneRelational(filters: Filter<T>, body: QueryBodyType<T>) {
+  async queryOne(filters: Filter<DBEntity>, body: QueryBodyType<Entity>) {
     let document = await this.findOne(filters, body._options);
 
     if (document) {
       await this._findRelationalRec(body, document);
     }
 
-    return document;
+    // TODO: can we fix "as unknown"?
+    return document as unknown as WithId<Entity>;
   }
 
-  async findRelational(filters: Filter<T>, body: QueryBodyType<T>) {
+  async query(filters: Filter<DBEntity>, body: QueryBodyType<DBEntity>) {
     // TODO: should use projection, theoretically
     // Or, if it's faster, just clean the query up after the result :)
     let documents = await this.find(filters, body._options).toArray();
@@ -297,7 +315,7 @@ export class Entity {
   _id: ObjectId;
 }
 
-export const Mix = Mixin as any;
+export const Mix = Mixin;
 
 export function getCollectionName<T>(entity: Constructor<T>) {
   return pluralize(entity.name.toLowerCase());

@@ -6,6 +6,25 @@ import { ObjectId } from 'bson';
 import { FindOptions as BaseFindOptions, Document } from 'mongodb';
 import 'mongoose';
 
+export interface CollectionEntities<
+  DatabaseEntity = any,
+  RelationalEntity = DatabaseEntity,
+> {
+  database: Constructor<DatabaseEntity>;
+  relational?: Constructor<RelationalEntity>;
+}
+
+export function createEntity<DatabaseEntity, RelationalEntity = DatabaseEntity>(
+  input: CollectionEntities<DatabaseEntity, RelationalEntity>,
+) {
+  const { database, relational } = input;
+
+  return {
+    database,
+    relational: relational ?? database,
+  } as CollectionEntities<DatabaseEntity, RelationalEntity>;
+}
+
 export function getCollectionToken<T>(entity: Constructor<T>) {
   return `${entity.name}Collection`;
 }
@@ -54,9 +73,9 @@ export type Flatten<T> = T extends (infer U)[] ? U : T;
 export type FindOptions = Pick<BaseFindOptions, 'skip' | 'limit' | 'sort'>;
 
 export type QueryBodyType<T> = { _options?: FindOptions } & {
-  [K in keyof T]?: T[K] extends string
+  [K in keyof T]?: T[K] extends string | number
     ? SimpleFieldValue
-    : SimpleFieldValue | QueryBodyType<Flatten<T[K]>>;
+    : QueryBodyType<Flatten<T[K]>>;
 };
 
 export interface RelationArgs<From = any, To = any> {

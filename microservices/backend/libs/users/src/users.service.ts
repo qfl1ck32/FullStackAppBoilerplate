@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { Collection } from '@app/collections/collections.class';
 import { InjectCollection } from '@app/collections/collections.decorators';
 
 import { CreateUserInput } from './dto/create.input';
@@ -8,7 +7,7 @@ import { CreateUserInput } from './dto/create.input';
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
 import { UsersSecurityService } from './users-security.service';
-import { User } from './users.entity';
+import { User, UsersCollection } from './users.entity';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +15,7 @@ export class UsersService {
 
   constructor(
     @InjectCollection(User)
-    public readonly collection: Collection<User>,
+    public readonly collection: UsersCollection,
     public readonly security: UsersSecurityService,
   ) {
     this.emailVerificationTokenLength = 16;

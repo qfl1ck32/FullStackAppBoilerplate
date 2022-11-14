@@ -5,12 +5,15 @@ import { Context } from '../defs';
 
 import { InsertOneResult, OptionalUnlessRequiredId } from 'mongodb';
 
-export class AfterInsertEvent<T = any> extends Event<{
-  collection: Collection<T>;
+export class AfterInsertEvent<
+  DBEntityType,
+  EntityType = DBEntityType,
+> extends Event<{
+  collection: Collection<DBEntityType, EntityType>;
 
   context?: Context;
 
-  document: Partial<OptionalUnlessRequiredId<T>>;
+  document: Partial<OptionalUnlessRequiredId<DBEntityType>>;
 
-  insertResult: InsertOneResult<T>;
+  insertResult: InsertOneResult<DBEntityType>;
 }> {}

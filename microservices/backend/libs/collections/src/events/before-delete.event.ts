@@ -5,10 +5,13 @@ import { Context } from '../defs';
 
 import { Filter } from 'mongodb';
 
-export class BeforeDeleteEvent<T = any> extends Event<{
-  collection: Collection<T>;
+export class BeforeDeleteEvent<
+  DBEntityType,
+  EntityType = DBEntityType,
+> extends Event<{
+  collection: Collection<DBEntityType, EntityType>;
 
   context?: Context;
 
-  filter: Filter<T>;
+  filter: Filter<EntityType>;
 }> {}

@@ -16,7 +16,7 @@ export class UsersResolver {
   // TODO: Why do I need a @Query() necessarily?
   @Query(() => User, { nullable: true })
   async hi() {
-    return this.usersService.collection.findOneRelational(
+    return this.usersService.collection.queryOne(
       {
         firstName: {
           $in: ['ba'],

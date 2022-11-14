@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Constructor } from '@app/core/defs';
 
 import { Collection } from './collections.class';
+import { CollectionEntities } from './defs';
 
 @Injectable()
 export class CollectionsStorage {
@@ -24,7 +25,7 @@ export class CollectionsStorage {
 
   public get<T>(entity: Constructor<T>) {
     return this.collections.find(
-      (collection) => collection.entity === entity,
+      (collection) => collection.entities.relational === entity,
     ) as Collection<T>;
   }
 }

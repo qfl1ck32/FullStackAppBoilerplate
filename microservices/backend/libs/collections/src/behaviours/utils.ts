@@ -8,10 +8,10 @@ export const AddBehaviour = (behaviour: AddBehaviourType) => {
   return SetMetadata(`Behaviour.${behaviour.name}`, behaviour);
 };
 
-export function getBehaviours<T>(model: Constructor<T>) {
-  const keys = Reflect.getMetadataKeys(model) as string[];
+export function getBehaviours<T>(entity: Constructor<T>) {
+  const keys = Reflect.getMetadataKeys(entity) as string[];
 
   return keys
     .filter((key) => key.startsWith('Behaviour.'))
-    .map((key) => Reflect.getMetadata(key, model));
+    .map((key) => Reflect.getMetadata(key, entity));
 }
