@@ -13,7 +13,7 @@ import { decorate } from 'ts-mixer';
 
 @decorate(ObjectType())
 @decorate(Schema())
-@decorate(AddBehaviour(softdeletable()))
+@decorate(AddBehaviour(softdeletable))
 @decorate(
   Relations<Softdeletable>()
     .add({

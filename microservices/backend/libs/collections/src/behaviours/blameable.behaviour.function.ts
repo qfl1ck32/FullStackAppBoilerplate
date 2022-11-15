@@ -1,4 +1,4 @@
-import { Blameable } from './blameable.behaviour';
+import type { Blameable } from './blameable.behaviour';
 
 import { BehaviourFunction, BlameableBehaviourOptions } from '../defs';
 import { BeforeInsertEvent } from '../events/before-insert.event';
@@ -7,7 +7,11 @@ import { UserMissingException } from '../exceptions/user-missing.exception';
 export const blameable: BehaviourFunction<
   Blameable,
   BlameableBehaviourOptions
-> = (options = {}) => {
+> = (
+  options = {
+    shouldThrowErrorWhenMissingUserId: true,
+  },
+) => {
   return (collection) => {
     const listener = async (event: BeforeInsertEvent<Blameable>) => {
       const { payload } = event;
@@ -15,7 +19,7 @@ export const blameable: BehaviourFunction<
       const { document, context } = payload;
 
       if (!context?.userId) {
-        if (options.throwErrorWhenMissing) {
+        if (options.shouldThrowErrorWhenMissingUserId) {
           throw new UserMissingException();
         }
       }

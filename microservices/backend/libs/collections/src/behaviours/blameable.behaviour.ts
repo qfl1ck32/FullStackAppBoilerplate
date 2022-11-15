@@ -22,7 +22,7 @@ import { decorate } from 'ts-mixer';
     })
     .build(),
 )
-@decorate(AddBehaviour(blameable()))
+@decorate(AddBehaviour(blameable))
 export class Blameable {
   @decorate(Field(() => ID))
   @decorate(Prop())

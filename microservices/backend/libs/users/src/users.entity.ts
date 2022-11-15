@@ -47,12 +47,8 @@ export class DBUser extends Entity {
 
 @ObjectType()
 @Schema()
-@AddBehaviour(
-  blameable({
-    throwErrorWhenMissing: false,
-  }),
-)
-@AddBehaviour(softdeletable())
+@AddBehaviour(blameable)
+@AddBehaviour(softdeletable)
 @Relations<User>()
   .add({
     field: 'deletedByUser',

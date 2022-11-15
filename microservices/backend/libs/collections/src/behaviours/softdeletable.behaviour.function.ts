@@ -1,4 +1,4 @@
-import { Softdeletable } from './softdeletable.behaviour';
+import type { Softdeletable } from './softdeletable.behaviour';
 
 import { BehaviourFunction, SoftdeletableBehaviourOptions } from '../defs';
 import { AfterDeleteEvent } from '../events/after-delete.event';
@@ -10,10 +10,20 @@ import { DeleteResult } from 'mongodb';
 export const softdeletable: BehaviourFunction<
   Softdeletable,
   SoftdeletableBehaviourOptions
-> = (behavioursOptions) => {
+> = (
+  behavioursOptions = {
+    shouldThrowErrorWhenMissingUserId: true,
+  },
+) => {
   return (collection) => {
     collection.deleteOne = async (filter, options = {}) => {
       const { context, ...mongoOptions } = options;
+
+      if (!context?.userId) {
+        if (behavioursOptions.shouldThrowErrorWhenMissingUserId) {
+          throw new UserMissingException();
+        }
+      }
 
       await collection.eventManager.emit(
         new BeforeDeleteEvent({
@@ -66,7 +76,7 @@ export const softdeletable: BehaviourFunction<
       );
 
       if (!context?.userId) {
-        if (behavioursOptions.throwErrorWhenMissing) {
+        if (behavioursOptions.shouldThrowErrorWhenMissingUserId) {
           throw new UserMissingException();
         }
       }

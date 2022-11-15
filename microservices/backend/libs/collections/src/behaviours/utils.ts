@@ -1,17 +1,47 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata, applyDecorators } from '@nestjs/common';
 
 import { Constructor } from '@app/core/defs';
 
-import { AddBehaviourType, BehaviourFunction } from '../defs';
+import {
+  BehaviourFunction,
+  BehaviourOptions,
+  BehaviourWithOptions,
+} from '../defs';
 
-export const AddBehaviour = (behaviour: AddBehaviourType) => {
-  return SetMetadata(`Behaviour.${behaviour.name}`, behaviour);
-};
+export function SetBehaviourOptions<T>(
+  behaviour: Constructor<T> | Function,
+  options: BehaviourOptions<T>,
+) {
+  return SetMetadata(
+    `Behaviour.${behaviour.name.toLowerCase()}.options`,
+    options,
+  );
+}
 
-export function getBehaviours<T>(entity: Constructor<T>) {
+export function AddBehaviour<T>(
+  behaviour: BehaviourFunction<T>,
+  options?: BehaviourOptions<T>,
+) {
+  const decorators = [
+    SetMetadata(`Behaviour.${behaviour.name.toLowerCase()}`, behaviour),
+  ];
+
+  if (options) {
+    decorators.push(SetBehaviourOptions(behaviour, options));
+  }
+
+  return applyDecorators(...decorators);
+}
+
+export function getBehavioursWithOptions<T>(entity: Constructor<T>) {
   const keys = Reflect.getMetadataKeys(entity) as string[];
 
-  return keys
+  const behaviourKeys = keys
     .filter((key) => key.startsWith('Behaviour.'))
-    .map((key) => Reflect.getMetadata(key, entity));
+    .filter((key) => !key.endsWith('.options'));
+
+  return behaviourKeys.map((key) => ({
+    behaviour: Reflect.getMetadata(key, entity),
+    options: Reflect.getMetadata(`${key}.options`, entity),
+  })) as BehaviourWithOptions[];
 }

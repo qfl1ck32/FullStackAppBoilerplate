@@ -1,5 +1,8 @@
 import { Constructor } from '@app/core/defs';
 
+import type { Blameable } from './behaviours/blameable.behaviour';
+import type { Softdeletable } from './behaviours/softdeletable.behaviour';
+import type { Timestampable } from './behaviours/timestampable.behaviour';
 import { Collection } from './collections.class';
 
 import { ObjectId } from 'bson';
@@ -31,16 +34,29 @@ declare module 'mongoose' {
 export { ObjectId };
 
 export interface BlameableBehaviourOptions {
-  throwErrorWhenMissing?: boolean;
+  shouldThrowErrorWhenMissingUserId?: boolean;
 }
 
 export interface SoftdeletableBehaviourOptions {
-  throwErrorWhenMissing?: boolean;
+  shouldThrowErrorWhenMissingUserId?: boolean;
 }
 
 export interface TimestampableBehaviourOptions {}
 
+export type BehaviourOptions<T> = T extends Blameable
+  ? BlameableBehaviourOptions
+  : T extends Softdeletable
+  ? SoftdeletableBehaviourOptions
+  : T extends Timestampable
+  ? TimestampableBehaviourOptions
+  : null;
+
 export type AddBehaviourType<T = any> = (collection: Collection<T>) => void;
+
+export type BehaviourWithOptions<T = any> = {
+  behaviour: BehaviourFunction<T>;
+  options?: BehaviourOptions<T>;
+};
 
 export type BehaviourFunction<T extends Document = any, OptionsType = any> = (
   options?: OptionsType,

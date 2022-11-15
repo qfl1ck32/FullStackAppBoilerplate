@@ -23,7 +23,7 @@ import { decorate } from 'ts-mixer';
     Ok, it was working, I just removed "type" from UserType, WTF?
 */
 
-const timestampable: BehaviourFunction<
+export const timestampable: BehaviourFunction<
   Timestampable,
   TimestampableBehaviourOptions
 > = (options) => {
@@ -45,7 +45,7 @@ const timestampable: BehaviourFunction<
 
 @decorate(ObjectType())
 @decorate(Schema())
-@decorate(AddBehaviour(timestampable()))
+@decorate(AddBehaviour(timestampable))
 export class Timestampable {
   @decorate(Field(() => Date))
   @decorate(Prop())

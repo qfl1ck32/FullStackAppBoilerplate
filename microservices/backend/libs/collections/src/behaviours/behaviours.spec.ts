@@ -1,16 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConfigModule } from '@app/config';
-import { Constructor } from '@app/core/defs';
 import { DatabaseModule } from '@app/database';
 import { EventManagerModule, EventManagerService } from '@app/event-manager';
 
 import { Blameable } from './blameable.behaviour';
 import { Softdeletable } from './softdeletable.behaviour';
 import { Timestampable } from './timestampable.behaviour';
+import { SetBehaviourOptions } from './utils';
 
 import { Collection } from '../collections.class';
 import { ProvideCollection } from '../collections.provider';
+import { CollectionsStorage } from '../collections.storage';
 import { CollectionEntities, ObjectId } from '../defs';
 import { UserMissingException } from '../exceptions/user-missing.exception';
 import { createEntity, getCollectionToken } from '../utils';
@@ -22,7 +23,7 @@ async function getCollectionAndEventManager<DatabaseEntity, RelationalEntity>(
   const module: TestingModule = await Test.createTestingModule({
     imports: [DatabaseModule, ConfigModule, EventManagerModule],
 
-    providers: [ProvideCollection(entities)],
+    providers: [ProvideCollection(entities), CollectionsStorage],
   }).compile();
 
   const collection = module.get<Collection<DatabaseEntity, RelationalEntity>>(
@@ -60,9 +61,13 @@ describe('Behaviours', () => {
   });
 
   it('should work with softdeletable', async () => {
+    @SetBehaviourOptions(Softdeletable, {
+      shouldThrowErrorWhenMissingUserId: false,
+    })
     class User extends Softdeletable {
       firstName: string;
     }
+
     const UserEntity = createEntity({
       database: User,
     });
@@ -86,7 +91,11 @@ describe('Behaviours', () => {
     expect(document.isDeleted).toBe(true);
   });
 
-  it('should work with blameable', async () => {
+  // TODO: test @SetBehaviourOptions
+  it.only('should work with blameable', async () => {
+    @SetBehaviourOptions(Blameable, {
+      shouldThrowErrorWhenMissingUserId: false,
+    })
     class User extends Blameable {
       firstName: string;
     }

@@ -3,9 +3,9 @@
 # ------------------------------------------------------
 
 type User {
-  _id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  _id: ID!
   isDeleted: Boolean
   deletedAt: DateTime
   deletedByUserId: ID

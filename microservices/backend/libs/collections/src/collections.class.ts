@@ -13,11 +13,11 @@ import { BeforeDeleteEvent } from './events/before-delete.event';
 import { BeforeInsertEvent } from './events/before-insert.event';
 import { BeforeUpdateEvent } from './events/before-update.event';
 
-import { getBehaviours } from './behaviours/utils';
+import { getBehavioursWithOptions } from './behaviours/utils';
 import { getRelations } from './collections.decorators';
 import { CollectionsStorage } from './collections.storage';
 import {
-  AddBehaviourType,
+  BehaviourWithOptions,
   CollectionEntities,
   CollectionRelationType,
   CollectionRelations,
@@ -62,7 +62,7 @@ export class Collection<
   ) {
     const { relational: entity } = entities;
 
-    const behaviours = getBehaviours(entity);
+    const behaviours = getBehavioursWithOptions(entity);
     const relations = getRelations(entity);
 
     const name = getCollectionName(entity);
@@ -77,8 +77,10 @@ export class Collection<
     this._initialiseRelations(relations);
   }
 
-  private _loadBehaviours(behaviours: AddBehaviourType[]) {
-    behaviours.forEach((behaviour) => behaviour(this));
+  private _loadBehaviours(behaviours: BehaviourWithOptions[]) {
+    behaviours.forEach((behaviour) =>
+      behaviour.behaviour(behaviour.options)(this),
+    );
   }
 
   private async _initialiseRelations(relations: RelationArgs[]) {
