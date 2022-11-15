@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { UserNotFoundException } from '@app/auth/exceptions/UserNotFound.exception';
 import { ConfigModule } from '@app/config';
 import { DatabaseModule } from '@app/database';
 import { EventManagerModule, EventManagerService } from '@app/event-manager';
@@ -61,6 +62,50 @@ describe('Behaviours', () => {
   });
 
   it('should work with softdeletable', async () => {
+    class User extends Softdeletable {
+      firstName: string;
+    }
+
+    const UserEntity = createEntity({
+      database: User,
+    });
+
+    const { collection } = await getCollectionAndEventManager(UserEntity);
+
+    const result = await collection.insertOne({
+      firstName: 'hi',
+    });
+
+    const { insertedId } = result;
+
+    await expect(collection.deleteOne({ _id: insertedId })).rejects.toThrow(
+      new UserMissingException(),
+    );
+
+    const userId = new ObjectId();
+
+    await collection.deleteOne(
+      {
+        _id: insertedId,
+      },
+      {
+        context: {
+          userId,
+        },
+      },
+    );
+
+    const document = await collection.findOne({
+      _id: insertedId,
+      isDeleted: true,
+    });
+
+    expect(document.deletedAt).toBeTruthy();
+    expect(document.isDeleted).toBe(true);
+    expect(document.deletedByUserId).toStrictEqual(userId);
+  });
+
+  it('should work with SetBehaviourOptions for softdeletable', async () => {
     @SetBehaviourOptions(Softdeletable, {
       shouldThrowErrorWhenMissingUserId: false,
     })
@@ -80,22 +125,19 @@ describe('Behaviours', () => {
 
     const { insertedId } = result;
 
-    await collection.deleteOne({ _id: insertedId });
+    await expect(
+      collection.deleteOne({ _id: insertedId }),
+    ).resolves.not.toThrow();
 
     const document = await collection.findOne({
       _id: insertedId,
       isDeleted: true,
     });
 
-    expect(document.deletedAt).toBeTruthy();
-    expect(document.isDeleted).toBe(true);
+    expect(document.deletedByUserId).toBeFalsy();
   });
 
-  // TODO: test @SetBehaviourOptions
-  it.only('should work with blameable', async () => {
-    @SetBehaviourOptions(Blameable, {
-      shouldThrowErrorWhenMissingUserId: false,
-    })
+  it('should work with blameable', async () => {
     class User extends Blameable {
       firstName: string;
     }
@@ -128,5 +170,26 @@ describe('Behaviours', () => {
     const document = await collection.findOne({ _id: insertedId });
 
     expect(document.createdByUserId).toStrictEqual(userId);
+  });
+
+  it('should work with SetBehaviourOptions blameable', async () => {
+    @SetBehaviourOptions(Blameable, {
+      shouldThrowErrorWhenMissingUserId: false,
+    })
+    class User extends Blameable {
+      firstName: string;
+    }
+
+    const UserEntity = createEntity({
+      database: User,
+    });
+
+    const { collection } = await getCollectionAndEventManager(UserEntity);
+
+    const { insertedId } = await collection.insertOne({ firstName: 'Andy' });
+
+    const document = await collection.findOne({ _id: insertedId });
+
+    expect(document.createdByUserId).toBeFalsy();
   });
 });
