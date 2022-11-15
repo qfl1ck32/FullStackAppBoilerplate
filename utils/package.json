@@ -3,7 +3,8 @@
     "glob": "^8.0.3"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^3.4.0",
     "@types/glob": "^8.0.0",
-    "@trivago/prettier-plugin-sort-imports": "^3.4.0"
+    "babel-prettier-parser": "^0.10.8"
   }
 }
