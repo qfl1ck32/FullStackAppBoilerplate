@@ -21,7 +21,7 @@ import {
   JWTAccessTokenAuthPayload,
   JWTRefreshTokenAuthPayload,
   JWTTokenType,
-} from './auth.defs';
+} from './defs';
 
 import { TokenExpiredError } from 'jsonwebtoken';
 

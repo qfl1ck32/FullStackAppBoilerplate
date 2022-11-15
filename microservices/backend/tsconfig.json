@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "lib": ["ES2021"],
+    "lib": [
+      "ES2021"
+    ],
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -19,32 +21,90 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@root": ["src"],
-      "@test": ["test"],
-      "@test/*": ["test/*"],
-      "@root/*": ["src/*"],
-      "@app/collections": ["libs/collections/src"],
-      "@app/collections/*": ["libs/collections/src/*"],
-      "@app/core": ["libs/core/src"],
-      "@app/core/*": ["libs/core/src/*"],
-      "@app/event-manager": ["libs/event-manager/src"],
-      "@app/event-manager/*": ["libs/event-manager/src/*"],
-      "@app/exceptions": ["libs/exceptions/src"],
-      "@app/exceptions/*": ["libs/exceptions/src/*"],
-      "@app/database": ["libs/database/src"],
-      "@app/database/*": ["libs/database/src/*"],
-      "@app/config": ["libs/config/src"],
-      "@app/config/*": ["libs/config/src/*"],
-      "@app/graphql": ["libs/graphql/src"],
-      "@app/graphql/*": ["libs/graphql/src/*"],
-      "@app/auth": ["libs/auth/src"],
-      "@app/auth/*": ["libs/auth/src/*"],
-      "@app/permissions": ["libs/permissions/src"],
-      "@app/permissions/*": ["libs/permissions/src/*"],
-      "@app/email": ["libs/email/src"],
-      "@app/email/*": ["libs/email/src/*"],
-      "@app/users": ["libs/users/src"],
-      "@app/users/*": ["libs/users/src/*"]
+      "@root": [
+        "src"
+      ],
+      "@test": [
+        "test"
+      ],
+      "@test/*": [
+        "test/*"
+      ],
+      "@root/*": [
+        "src/*"
+      ],
+      "@app/collections": [
+        "libs/collections/src"
+      ],
+      "@app/collections/*": [
+        "libs/collections/src/*"
+      ],
+      "@app/core": [
+        "libs/core/src"
+      ],
+      "@app/core/*": [
+        "libs/core/src/*"
+      ],
+      "@app/event-manager": [
+        "libs/event-manager/src"
+      ],
+      "@app/event-manager/*": [
+        "libs/event-manager/src/*"
+      ],
+      "@app/exceptions": [
+        "libs/exceptions/src"
+      ],
+      "@app/exceptions/*": [
+        "libs/exceptions/src/*"
+      ],
+      "@app/database": [
+        "libs/database/src"
+      ],
+      "@app/database/*": [
+        "libs/database/src/*"
+      ],
+      "@app/config": [
+        "libs/config/src"
+      ],
+      "@app/config/*": [
+        "libs/config/src/*"
+      ],
+      "@app/graphql": [
+        "libs/graphql/src"
+      ],
+      "@app/graphql/*": [
+        "libs/graphql/src/*"
+      ],
+      "@app/auth": [
+        "libs/auth/src"
+      ],
+      "@app/auth/*": [
+        "libs/auth/src/*"
+      ],
+      "@app/permissions": [
+        "libs/permissions/src"
+      ],
+      "@app/permissions/*": [
+        "libs/permissions/src/*"
+      ],
+      "@app/email": [
+        "libs/email/src"
+      ],
+      "@app/email/*": [
+        "libs/email/src/*"
+      ],
+      "@app/users": [
+        "libs/users/src"
+      ],
+      "@app/users/*": [
+        "libs/users/src/*"
+      ],
+      "@app/stripe": [
+        "libs/stripe/src"
+      ],
+      "@app/stripe/*": [
+        "libs/stripe/src/*"
+      ]
     }
   }
 }

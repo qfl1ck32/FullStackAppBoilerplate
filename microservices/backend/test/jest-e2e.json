@@ -1,5 +1,9 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
@@ -30,6 +34,8 @@
     "@app/email/(.*)": "<rootDir>/../libs/email/src/$1",
     "@app/email": "<rootDir>/../libs/email/src",
     "@app/users/(.*)": "<rootDir>/../libs/users/src/$1",
-    "@app/users": "<rootDir>/../libs/users/src"
+    "@app/users": "<rootDir>/../libs/users/src",
+    "@app/stripe/(.*)": "<rootDir>/../libs/stripe/src/$1",
+    "@app/stripe": "<rootDir>/../libs/stripe/src"
   }
 }

@@ -7,8 +7,8 @@ import { UserNotAuthorizedException } from '@app/graphql/exceptions/UserNotAutho
 import { ExpiredJwtException } from './exceptions/ExpiredJwt.exception';
 import { InvalidJwtException } from './exceptions/InvalidJwt.exception';
 
-import { JWTAccessTokenAuthPayload } from './auth.defs';
 import { AuthService } from './auth.service';
+import { JWTAccessTokenAuthPayload } from './defs';
 
 import { Request } from 'express';
 import { TokenExpiredError } from 'jsonwebtoken';

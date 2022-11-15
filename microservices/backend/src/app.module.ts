@@ -5,8 +5,10 @@ import { GraphQLModule } from '@app/graphql';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { StripeModule } from 'libs/stripe/src';
+
 @Module({
-  imports: [GraphQLModule],
+  imports: [GraphQLModule, StripeModule],
   controllers: [AppController],
   providers: [AppService],
 })
