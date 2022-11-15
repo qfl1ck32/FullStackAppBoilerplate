@@ -7,11 +7,7 @@ import { UserMissingException } from '../exceptions/user-missing.exception';
 export const blameable: BehaviourFunction<
   Blameable,
   BlameableBehaviourOptions
-> = (
-  options = {
-    shouldThrowErrorWhenMissingUserId: true,
-  },
-) => {
+> = (options) => {
   return (collection) => {
     const listener = async (event: BeforeInsertEvent<Blameable>) => {
       const { payload } = event;

@@ -22,7 +22,11 @@ import { decorate } from 'ts-mixer';
     })
     .build(),
 )
-@decorate(AddBehaviour(blameable))
+@decorate(
+  AddBehaviour(blameable, {
+    shouldThrowErrorWhenMissingUserId: true,
+  }),
+)
 export class Blameable {
   @decorate(Field(() => ID))
   @decorate(Prop())

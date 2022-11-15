@@ -10,11 +10,7 @@ import { DeleteResult } from 'mongodb';
 export const softdeletable: BehaviourFunction<
   Softdeletable,
   SoftdeletableBehaviourOptions
-> = (
-  behavioursOptions = {
-    shouldThrowErrorWhenMissingUserId: true,
-  },
-) => {
+> = (behavioursOptions) => {
   return (collection) => {
     collection.deleteOne = async (filter, options = {}) => {
       const { context, ...mongoOptions } = options;

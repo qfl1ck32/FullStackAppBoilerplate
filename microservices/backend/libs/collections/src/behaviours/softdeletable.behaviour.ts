@@ -13,7 +13,11 @@ import { decorate } from 'ts-mixer';
 
 @decorate(ObjectType())
 @decorate(Schema())
-@decorate(AddBehaviour(softdeletable))
+@decorate(
+  AddBehaviour(softdeletable, {
+    shouldThrowErrorWhenMissingUserId: true,
+  }),
+)
 @decorate(
   Relations<Softdeletable>()
     .add({
