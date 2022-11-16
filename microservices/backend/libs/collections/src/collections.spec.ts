@@ -347,7 +347,7 @@ describe('Collections', () => {
       // expect(address.user?.comments).toHaveLength(2);
     });
 
-    it('should work with relational filtering', async () => {
+    it.only('should work with relational filtering', async () => {
       const { getCollection } = await generateModule([
         UserEntity,
         CommentEntity,
@@ -428,7 +428,7 @@ describe('Collections', () => {
       ]);
     });
 
-    it.only('should have good times, lol', async () => {
+    it('should have good times, lol', async () => {
       const { getCollection } = await generateModule([
         UserEntity,
         CommentEntity,

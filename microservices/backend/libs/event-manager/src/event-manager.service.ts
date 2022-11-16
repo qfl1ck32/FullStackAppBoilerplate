@@ -9,20 +9,16 @@ export type ListenerFn<T> = (payload: T) => void | Promise<void>;
 
 @Injectable()
 export class EventManagerService {
-  private eventEmitter2: EventEmitter2;
-
-  constructor() {
-    this.eventEmitter2 = new EventEmitter2();
-  }
+  constructor(public readonly eventEmitter: EventEmitter2) {}
 
   async emit<T>(event: Event<T>) {
-    return this.eventEmitter2.emitAsync(event.constructor.name, event);
+    return this.eventEmitter.emitAsync(event.constructor.name, event);
   }
 
   async addListener<T>(
     event: Constructor<Event<T>>,
     listener: ListenerFn<Event<T>>,
   ) {
-    return this.eventEmitter2.addListener(event.name, listener);
+    return this.eventEmitter.addListener(event.name, listener);
   }
 }

@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { InjectCollection } from '@app/collections/collections.decorators';
+import { EventManagerService } from '@app/event-manager';
 
 import { CreateUserInput } from './dto/create.input';
+
+import { UserCreatedEvent } from './events/user-created.event';
 
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
@@ -17,6 +20,7 @@ export class UsersService {
     @InjectCollection(User)
     public readonly collection: UsersCollection,
     public readonly security: UsersSecurityService,
+    private eventManager: EventManagerService,
   ) {
     this.emailVerificationTokenLength = 16;
   }
@@ -59,6 +63,12 @@ export class UsersService {
         requiresEmailValidation,
       },
     });
+
+    await this.eventManager.emit(
+      new UserCreatedEvent({
+        userId,
+      }),
+    );
 
     return userId;
   }
