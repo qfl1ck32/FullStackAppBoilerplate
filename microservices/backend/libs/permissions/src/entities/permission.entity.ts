@@ -1,4 +1,3 @@
-import { Field } from '@nestjs/graphql';
 import { Prop, Schema } from '@nestjs/mongoose';
 
 import { Blameable } from '@app/collections/behaviours/blameable.behaviour';

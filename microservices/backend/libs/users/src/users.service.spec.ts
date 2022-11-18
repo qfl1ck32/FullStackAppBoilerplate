@@ -6,7 +6,7 @@ import { CreateUserInput } from './dto/create.input';
 
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
-import { UserPassword } from './users.entity';
+import { UserPassword } from './users';
 import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 

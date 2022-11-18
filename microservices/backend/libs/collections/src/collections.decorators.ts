@@ -1,9 +1,24 @@
 import { Inject, applyDecorators } from '@nestjs/common';
+import {
+  Field as BaseField,
+  FieldOptions,
+  ObjectType,
+  ObjectTypeOptions,
+  ReturnTypeFunc,
+} from '@nestjs/graphql';
+import {
+  Prop as BaseProp,
+  PropOptions,
+  Schema,
+  SchemaOptions,
+} from '@nestjs/mongoose';
 
 import { Constructor, Decorator } from '@app/core/defs';
 
 import { RelationArgs } from './defs';
 import { getCollectionToken } from './utils';
+
+import { decorate } from 'ts-mixer';
 
 export function InjectCollection<T>(entity: Constructor<T>) {
   return Inject(getCollectionToken(entity));
@@ -58,3 +73,22 @@ export function getRelations<T>(entity: Constructor<T>) {
     >[]) || []
   );
 }
+
+export const MixField = (
+  returnTypeFunction?: ReturnTypeFunc,
+  options?: FieldOptions,
+) => {
+  return decorate(BaseField(returnTypeFunction, options));
+};
+
+export const MixProp = (options?: PropOptions) => {
+  return decorate(BaseProp(options));
+};
+
+export const MixObjectType = (options?: ObjectTypeOptions) => {
+  return decorate(ObjectType(options));
+};
+
+export const MixSchema = (options?: SchemaOptions) => {
+  return decorate(Schema(options));
+};

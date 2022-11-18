@@ -6,9 +6,16 @@ import { softdeletable } from '@app/collections/behaviours/softdeletable.behavio
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { AddBehaviour } from '@app/collections/behaviours/utils';
 import { Collection, Entity, Mix } from '@app/collections/collections.class';
-import { Relations } from '@app/collections/collections.decorators';
+import {
+  MixField,
+  MixObjectType,
+  MixProp,
+  MixSchema,
+  Relations,
+} from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
 import { createEntity } from '@app/collections/utils';
+import { Constructor } from '@app/core/defs';
 import { Role } from '@app/permissions/defs';
 
 export class UserPassword {
@@ -21,27 +28,29 @@ export class UserPassword {
   emailVerificationToken?: string;
 }
 
+@MixObjectType()
+@MixSchema()
 export class DBUser extends Entity {
-  @Field(() => String)
-  @Prop()
+  @MixField(() => String)
+  @MixProp()
   firstName: string;
 
-  @Field(() => String)
-  @Prop()
+  @MixField(() => String)
+  @MixProp()
   lastName: string;
 
-  @Field(() => String)
-  @Prop()
+  @MixField(() => String)
+  @MixProp()
   username: string;
 
-  @Field(() => String)
-  @Prop()
+  @MixField(() => String)
+  @MixProp()
   email: string;
 
-  @Field(() => [Role])
+  @MixField(() => [Role])
   roles: Role[];
 
-  @Prop()
+  @MixProp()
   password: UserPassword;
 }
 
@@ -95,10 +104,6 @@ export class User extends Mix(DBUser, Timestampable) {
   @Field(() => User, { nullable: true })
   createdByUser?: User;
 }
-
-// TODO: this should happen in another place, because you might wanna change "Role".
-// Same goes for the users collection
-registerEnumType(Role, { name: 'Role' });
 
 export const UserEntity = createEntity({
   database: DBUser,

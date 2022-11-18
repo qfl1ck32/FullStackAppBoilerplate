@@ -127,8 +127,10 @@ export class Collection<
       }),
     );
 
-    // TODO: type
-    const insertResult = await super.insertOne(document as any, mongoOptions);
+    const insertResult = await super.insertOne(
+      document as OptionalUnlessRequiredId<DBEntity>,
+      mongoOptions,
+    );
 
     await this.eventManager.emit(
       new AfterInsertEvent({
@@ -144,7 +146,6 @@ export class Collection<
 
   // @ts-ignore
   async findOne(filter: Filter<DBEntity>, options: FindOptions = {}) {
-    // @ts-ignore ??
     return super.findOne(filter, options) as DBEntity;
   }
 

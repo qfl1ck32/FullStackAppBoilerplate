@@ -9,8 +9,8 @@ import { UserCreatedEvent } from './events/user-created.event';
 
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
+import { User, UsersCollection } from './users';
 import { UsersSecurityService } from './users-security.service';
-import { User, UsersCollection } from './users.entity';
 
 @Injectable()
 export class UsersService {

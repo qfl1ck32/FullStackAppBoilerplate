@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema } from '@nestjs/mongoose';
 
-import { User } from '@app/users/users.entity';
+import { User } from '@app/users/users';
 
 import { softdeletable } from './softdeletable.behaviour.function';
 import { AddBehaviour } from './utils';

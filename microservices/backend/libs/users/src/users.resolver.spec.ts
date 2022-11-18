@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthModule, AuthService } from '@app/auth';
 import { RegisterUserInput } from '@app/auth/dto/register.input';
 
-import { User } from './users.entity';
+import { User } from './users';
 import { UsersModule } from './users.module';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';

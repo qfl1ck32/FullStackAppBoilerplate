@@ -29,6 +29,9 @@ export function ProvideCollection<DBEntityType, EntityType>(
         eventManager,
       );
 
+      console.log('Adaug');
+      console.log(entity);
+
       collectionsStorage.add(collection);
 
       return collection;

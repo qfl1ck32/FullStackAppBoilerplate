@@ -4,17 +4,15 @@ import { GraphQLModule as GQLModule } from '@nestjs/graphql';
 
 import { ObjectId } from '@app/collections/defs';
 import { Exception } from '@app/exceptions/exception.class';
-import { UsersModule } from '@app/users';
 
 import { GQLContext } from './defs';
+import { FrameworkResolver } from './framework/framework.resolver';
 
 import { GraphQLError } from 'graphql';
 import * as path from 'path';
 
 @Module({
   imports: [
-    UsersModule,
-
     GQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: path.join(process.cwd(), 'src/schema.gql'),
 
@@ -53,6 +51,6 @@ import * as path from 'path';
     }),
   ],
 
-  providers: [],
+  providers: [FrameworkResolver],
 })
 export class GraphQLModule {}

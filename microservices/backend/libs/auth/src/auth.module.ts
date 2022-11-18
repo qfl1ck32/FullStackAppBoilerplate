@@ -6,12 +6,13 @@ import { PermissionsModule } from '@app/permissions';
 import { UsersModule } from '@app/users';
 
 import { AuthMiddleware } from './auth.middleware';
+import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 
 @Module({
   imports: [ConfigModule, UsersModule, PermissionsModule],
 
-  providers: [AuthService, JwtService],
+  providers: [AuthService, JwtService, AuthResolver],
   exports: [AuthService, JwtService],
 })
 export class AuthModule {

@@ -18,7 +18,9 @@ export class PermissionsService {
   ) {}
 
   async find(input: FindPermissionInput) {
-    return this.collection.find(input).toArray();
+    const roles = await this.collection.find(input).toArray();
+
+    return roles.map((role) => role.permission);
   }
 
   async has(input: HasPermissionInput) {

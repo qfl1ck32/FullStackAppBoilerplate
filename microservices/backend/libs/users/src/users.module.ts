@@ -5,8 +5,8 @@ import { ProvideCollection } from '@app/collections/collections.provider';
 import { DatabaseModule } from '@app/database';
 import { PermissionsModule } from '@app/permissions';
 
+import { UserEntity } from './users';
 import { UsersSecurityService } from './users-security.service';
-import { UserEntity } from './users.entity';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
