@@ -3,6 +3,6 @@ export enum Domain {
 }
 
 export enum Role {
-  Admin = 'ADMIN',
-  EndUser = 'END_USER',
+  ADMIN = 'ADMIN',
+  END_USER = 'END_USER',
 }

@@ -1,0 +1,1 @@
+export const USERS_ENTITY_TOKEN = 'USERS_ENTITY';

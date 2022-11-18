@@ -1,14 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { MongooseModule, MongooseModuleFactoryOptions } from '@nestjs/mongoose';
 
 import { ConfigModule, ConfigService } from '@app/config';
-import { EventManagerModule, EventManagerService } from '@app/event-manager';
 
 import { DatabaseService } from './database.service';
 
+@Global()
 @Module({
   imports: [
-    EventManagerModule,
     MongooseModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
         return {
@@ -22,7 +21,7 @@ import { DatabaseService } from './database.service';
     }),
   ],
 
-  providers: [DatabaseService, EventManagerService],
-  exports: [DatabaseService, EventManagerService],
+  providers: [DatabaseService],
+  exports: [DatabaseService],
 })
 export class DatabaseModule {}

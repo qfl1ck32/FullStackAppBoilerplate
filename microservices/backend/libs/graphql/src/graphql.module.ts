@@ -1,5 +1,5 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { GraphQLModule as GQLModule } from '@nestjs/graphql';
 
 import { ObjectId } from '@app/collections/defs';
@@ -11,6 +11,7 @@ import { FrameworkResolver } from './framework/framework.resolver';
 import { GraphQLError } from 'graphql';
 import * as path from 'path';
 
+@Global()
 @Module({
   imports: [
     GQLModule.forRoot<ApolloDriverConfig>({

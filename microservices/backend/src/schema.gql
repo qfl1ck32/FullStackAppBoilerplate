@@ -20,8 +20,8 @@ type User {
 }
 
 enum Role {
-  Admin
-  EndUser
+  ADMIN
+  END_USER
 }
 
 """
@@ -37,6 +37,7 @@ type LoginUserResponse {
 type Query {
   framework: String!
   issueAccessToken(input: IssueAccessTokenInput!): String!
+  getUser: User!
 }
 
 input IssueAccessTokenInput {

@@ -9,7 +9,7 @@ import { UserCreatedEvent } from './events/user-created.event';
 
 import { UserAlreadyExistsException } from './exceptions/UserAlreadyExists.exception';
 
-import { User, UsersCollection } from './users';
+import { UserEntity, UsersCollection } from './users';
 import { UsersSecurityService } from './users-security.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class UsersService {
   public emailVerificationTokenLength: number;
 
   constructor(
-    @InjectCollection(User)
+    @InjectCollection(UserEntity.relational)
     public readonly collection: UsersCollection,
     public readonly security: UsersSecurityService,
     private eventManager: EventManagerService,

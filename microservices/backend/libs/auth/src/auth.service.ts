@@ -49,7 +49,7 @@ export class AuthService {
     });
 
     await this.permissionService.add({
-      permission: Role.EndUser,
+      permission: Role.END_USER,
       domain: Domain.APP,
       userId,
     });

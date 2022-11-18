@@ -15,7 +15,6 @@ import {
 } from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
 import { createEntity } from '@app/collections/utils';
-import { Constructor } from '@app/core/defs';
 import { Role } from '@app/permissions/defs';
 
 export class UserPassword {

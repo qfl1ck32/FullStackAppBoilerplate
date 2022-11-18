@@ -1,4 +1,5 @@
 import '@app/config/defs';
+import '@app/permissions/defs';
 
 import 'mongoose';
 
