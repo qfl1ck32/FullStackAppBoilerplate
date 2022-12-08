@@ -3,9 +3,8 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { ProvideCollection } from '@app/collections/collections.provider';
 
-import { PermissionEntity } from './entities/permission.entity';
-
 import { Role } from './defs';
+import { PermissionEntity } from './permission';
 import { PermissionsService } from './permissions.service';
 
 @Global()
@@ -13,6 +12,7 @@ import { PermissionsService } from './permissions.service';
 export class PermissionsModule {
   static forRoot(): DynamicModule {
     registerEnumType(Role, {
+      // TODO: get from the enum? Reflect.
       name: 'Role',
     });
 

@@ -110,6 +110,33 @@
       "compilerOptions": {
         "tsConfigPath": "libs/stripe/tsconfig.lib.json"
       }
+    },
+    "yup-schema-generator": {
+      "type": "library",
+      "root": "libs/yup-schema-generator",
+      "entryFile": "index",
+      "sourceRoot": "libs/yup-schema-generator/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/yup-schema-generator/tsconfig.lib.json"
+      }
+    },
+    "i18n": {
+      "type": "library",
+      "root": "libs/i18n",
+      "entryFile": "index",
+      "sourceRoot": "libs/i18n/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/i18n/tsconfig.lib.json"
+      }
+    },
+    "logger": {
+      "type": "library",
+      "root": "libs/logger",
+      "entryFile": "index",
+      "sourceRoot": "libs/logger/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/logger/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {

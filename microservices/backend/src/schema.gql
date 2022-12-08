@@ -8,6 +8,7 @@ type User {
   username: String!
   email: String!
   roles: [Role!]!
+  preferredLanguage: Language!
   createdAt: DateTime!
   updatedAt: DateTime!
   _id: ID!
@@ -20,8 +21,13 @@ type User {
 }
 
 enum Role {
-  ADMIN
-  END_USER
+  admin
+  end_user
+}
+
+enum Language {
+  en
+  ro
 }
 
 """
@@ -50,10 +56,10 @@ type Mutation {
 }
 
 input RegisterUserInput {
-  firstName: String!
-  lastName: String!
-  email: String!
+  firstName: String
+  lastName: String
   username: String
+  email: String!
   password: String!
 }
 

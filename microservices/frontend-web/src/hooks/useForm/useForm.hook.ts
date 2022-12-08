@@ -1,24 +1,35 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  UseFormProps as BaseUseFormProps,
-  FieldValues,
-  useForm as baseUseForm,
-} from 'react-hook-form';
+import { use } from '@libs/di/hooks/use';
+import { I18NService } from '@libs/i18n/i18n.service';
+import { useEffect } from 'react';
+import { FieldValues, useForm as baseUseForm } from 'react-hook-form';
 
-export interface UseFormProps<TFieldValues extends FieldValues, TContext = any>
-  extends Omit<BaseUseFormProps<TFieldValues, TContext>, 'resolver'> {
-  schema: any;
-}
+import { OnSubmitValues, UseFormProps } from './defs';
 
 export function useForm<
   TFieldValues extends FieldValues = FieldValues,
+  YupSchemaType extends {} = {},
   TContext = any,
->(props: UseFormProps<TFieldValues, TContext>) {
+>(props: UseFormProps<TFieldValues, YupSchemaType, TContext>) {
   const { schema, ...rest } = props;
 
-  return baseUseForm({
+  const i18nService = use(I18NService);
+
+  const form = baseUseForm<OnSubmitValues<typeof schema>>({
     ...rest,
 
     resolver: yupResolver(schema),
-  });
+  } as any);
+
+  useEffect(() => {
+    form.trigger(Object.keys(form.formState.errors) as any);
+  }, [i18nService.activePolyglot]);
+
+  const getErrorMessage = (field: keyof YupSchemaType) =>
+    form.formState.errors[field]?.message;
+
+  return {
+    ...form,
+    getErrorMessage,
+  };
 }

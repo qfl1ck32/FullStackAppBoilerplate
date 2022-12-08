@@ -1,10 +1,13 @@
 {
   "dependencies": {
-    "glob": "^8.0.3"
+    "glob": "^8.0.3",
+    "lodash": "^4.17.21",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.4.0",
     "@types/glob": "^8.0.0",
+    "@types/lodash": "^4.14.191",
     "babel-prettier-parser": "^0.10.8"
   }
 }

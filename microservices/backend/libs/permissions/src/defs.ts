@@ -1,8 +1,8 @@
 export enum Domain {
-  APP = 'app',
+  app = 'app',
 }
 
 export enum Role {
-  ADMIN = 'ADMIN',
-  END_USER = 'END_USER',
+  admin = 'admin',
+  end_user = 'end_user',
 }

@@ -1,0 +1,11 @@
+{
+  "register": "Register",
+  "login": "Login",
+
+  "forgotPassword": "Forgot your pasword?",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "doNotHaveAnAccountYet": "Don't have an account?",
+
+  "show": "Show",
+  "hide": "Hide"
+}

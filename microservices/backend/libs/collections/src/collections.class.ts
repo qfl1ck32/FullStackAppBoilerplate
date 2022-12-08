@@ -336,7 +336,7 @@ export class Collection<
       if (
         typeof value !== 'object' ||
         value instanceof ObjectId ||
-        MONGODB_QUERY_OPERATORS.includes(key)
+        MONGODB_QUERY_OPERATORS[key]
       ) {
         pipeline.push({
           $match: {

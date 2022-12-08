@@ -1,26 +1,29 @@
-import { execSync } from "child_process";
-import { readFileSync, writeFileSync } from "fs";
-import { glob } from "glob";
+import { execSync } from 'child_process';
+import { readFileSync, writeFileSync } from 'fs';
+import { glob } from 'glob';
 
 const getCode = (className: string) => {
   const name = className.match(/[A-Z][a-z]+/g) as RegExpMatchArray;
 
   name.pop();
 
-  return name.map((subname) => subname.toUpperCase()).join("_");
+  return name.map((subname) => subname.toUpperCase()).join('_');
 };
 
 const main = async () => {
-  const exceptionsRegex = "../backend/**/*.exception.ts";
-  const exceptionCodesFileName = "../exception-codes.ts";
+  const exceptionsRegex = '../backend/**/*.exception.ts';
+  const exceptionCodesFileName = '../exception-codes.ts';
 
   const codes = [] as string[];
 
+  // TODO: why not just import the file & call .getCode() ?
   glob(exceptionsRegex, (_, matches) => {
     for (const match of matches) {
-      const fileContent = readFileSync(match, "utf-8");
+      const fileContent = readFileSync(match, 'utf-8');
 
-      const classNameRegex = new RegExp("export class (.*) extends Exception {");
+      const classNameRegex = new RegExp(
+        'export class (.*) extends Exception {',
+      );
       const customCodeRegex = new RegExp("getCode[(][)] {\n    return '(.*)';");
 
       const className = classNameRegex.exec(fileContent)?.[1];
@@ -34,14 +37,14 @@ const main = async () => {
           .map((code) => {
             return `${code} = "${code}"`;
           })
-          .join(",\n\t")}
+          .join(',\n\t')}
       }`;
 
     writeFileSync(exceptionCodesFileName, text);
 
     execSync(`prettier ${exceptionCodesFileName} --write`);
 
-    console.log("Done");
+    console.log('Done');
   });
 
   return;

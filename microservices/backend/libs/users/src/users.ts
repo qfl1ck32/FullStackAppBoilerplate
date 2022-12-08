@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema } from '@nestjs/mongoose';
 
 import { blameable } from '@app/collections/behaviours/blameable.behaviour.function';
@@ -15,6 +15,7 @@ import {
 } from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
 import { createEntity } from '@app/collections/utils';
+import { Language } from '@app/i18n/defs';
 import { Role } from '@app/permissions/defs';
 
 export class UserPassword {
@@ -49,14 +50,21 @@ export class DBUser extends Entity {
   @MixField(() => [Role])
   roles: Role[];
 
+  @MixField(() => Language)
+  preferredLanguage: Language;
+
   @MixProp()
   password: UserPassword;
 }
 
 @ObjectType()
 @Schema()
-@AddBehaviour(blameable)
-@AddBehaviour(softdeletable)
+@AddBehaviour(blameable, {
+  shouldThrowErrorWhenMissingUserId: false,
+})
+@AddBehaviour(softdeletable, {
+  shouldThrowErrorWhenMissingUserId: true,
+})
 @Relations<User>()
   .add({
     field: 'deletedByUser',

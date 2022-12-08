@@ -48,7 +48,7 @@ export class RolesGuard implements CanActivate {
     return new Promise(async (resolve, reject) => {
       const hasPermission = await this.permissionsService.has({
         userId,
-        domain: Domain.APP,
+        domain: Domain.app,
         permission: requiredRoles,
       });
 

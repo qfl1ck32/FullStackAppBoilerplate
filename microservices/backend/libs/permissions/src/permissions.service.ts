@@ -8,7 +8,7 @@ import { FindPermissionInput } from './dto/find-permission.input';
 import { HasPermissionInput } from './dto/has-permission.input';
 import { RemovePermissionInput } from './dto/remove-permission.input';
 
-import { Permission } from './entities/permission.entity';
+import { Permission } from './permission';
 
 @Injectable()
 export class PermissionsService {
@@ -51,11 +51,18 @@ export class PermissionsService {
       return;
     }
 
-    const { insertedId: permissionId } = await this.collection.insertOne({
-      userId,
-      permission,
-      domain,
-    });
+    const { insertedId: permissionId } = await this.collection.insertOne(
+      {
+        userId,
+        permission,
+        domain,
+      },
+      {
+        context: {
+          userId,
+        },
+      },
+    );
 
     return permissionId;
   }

@@ -1,0 +1,18 @@
+{
+  "auth": {
+    "register": "înregistrează-te",
+    "login": "Loghează-te",
+    "forgotPassword": "Ai uitat parola?",
+    "alreadyHaveAnAccount": "Ai deja un cont?",
+    "doNotHaveAnAccountYet": "Nu ai un cont?",
+    "show": "Arată",
+    "hide": "Ascunde"
+  },
+  "general": {
+    "firstName": "Nume",
+    "lastName": "Prenume",
+    "email": "E-mail",
+    "password": "Parolă",
+    "username": "Username"
+  }
+}

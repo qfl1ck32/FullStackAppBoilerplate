@@ -20,6 +20,11 @@ export type IssueAccessTokenInput = {
   refreshToken: Scalars['String'];
 };
 
+export enum Language {
+  En = 'en',
+  Ro = 'ro'
+}
+
 export type LoginUserInput = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
@@ -49,7 +54,8 @@ export type MutationRegisterArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  hi: User;
+  framework: Scalars['String'];
+  getUser: User;
   issueAccessToken: Scalars['String'];
 };
 
@@ -60,23 +66,23 @@ export type QueryIssueAccessTokenArgs = {
 
 export type RegisterUserInput = {
   email: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
   username?: InputMaybe<Scalars['String']>;
 };
 
 export enum Role {
-  Admin = 'ADMIN',
-  EndUser = 'END_USER'
+  Admin = 'admin',
+  EndUser = 'end_user'
 }
 
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
-  createdByUser: User;
-  createdByUserId: Scalars['ID'];
+  createdByUser?: Maybe<User>;
+  createdByUserId?: Maybe<Scalars['ID']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   deletedByUser?: Maybe<User>;
   deletedByUserId?: Maybe<Scalars['ID']>;
@@ -84,6 +90,7 @@ export type User = {
   firstName: Scalars['String'];
   isDeleted?: Maybe<Scalars['Boolean']>;
   lastName: Scalars['String'];
+  preferredLanguage: Language;
   roles: Array<Role>;
   updatedAt: Scalars['DateTime'];
   username: Scalars['String'];

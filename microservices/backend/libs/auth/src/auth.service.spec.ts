@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@app/config';
 import { PermissionsService } from '@app/permissions';
 import { Domain, Role } from '@app/permissions/defs';
-import { Permission } from '@app/permissions/entities/permission.entity';
+import { Permission } from '@app/permissions/permission';
 
 import { LoginUserInput } from './dto/login.input';
 import { RegisterUserInput } from './dto/register.input';
@@ -14,13 +14,13 @@ import { InvalidJwtException } from './exceptions/InvalidJwt.exception';
 import { UserNotFoundException } from './exceptions/UserNotFound.exception';
 import { WrongPasswordException } from './exceptions/WrongPassword.exception';
 
+import { AuthModule } from './auth.module';
+import { AuthService } from './auth.service';
 import {
   JWTAccessTokenAuthPayload,
   JWTRefreshTokenAuthPayload,
   JWTTokenType,
-} from './auth.defs';
-import { AuthModule } from './auth.module';
-import { AuthService } from './auth.service';
+} from './defs';
 
 // TODO: remove this input, lol
 import { registerUserTestInput } from '@test/utils/inputs';
@@ -55,7 +55,7 @@ describe('AuthService', () => {
 
     expect(permissions[0]).toMatchObject({
       domain: Domain.APP,
-      permission: Role.EndUser,
+      permission: Role.END_USER,
       userId,
     } as Partial<Permission>);
   });
