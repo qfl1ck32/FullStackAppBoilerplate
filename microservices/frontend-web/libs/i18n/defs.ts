@@ -1,5 +1,7 @@
 import { Join, NestedPaths } from '@libs/core/defs';
 
+import { Language } from '@root/gql/operations';
+
 import * as translations from './translations/en.json';
 
 export type I18NMessages = {
@@ -26,3 +28,9 @@ export type Phrase<T extends AllPhrases = any> = Join<
   >,
   '.'
 >;
+
+declare module '@libs/session/defs' {
+  export interface ISessionStorage {
+    language: Language;
+  }
+}

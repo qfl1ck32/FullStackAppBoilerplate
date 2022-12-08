@@ -25,6 +25,12 @@ export class AuthService extends StateService<AuthServiceState, any> {
     @Inject() protected readonly notificationService: NotificationService,
   ) {
     super();
+
+    this.setState({
+      isAuthenticated: false,
+      isLoading: false,
+      user: undefined,
+    });
   }
 
   public async login(input: LoginUserInput) {

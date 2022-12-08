@@ -20,17 +20,14 @@ import { FaLock, FaUserAlt } from 'react-icons/fa';
 
 import { useForm } from '@hooks/useForm/useForm.hook';
 import { OnSubmitFunction } from '@hooks/useForm/defs';
-import { RegisterUserInputSchema } from '@root/yup/schema';
+import { getRegisterUserInputSchema } from '@root/yup/schema';
 import { useTranslation } from '@libs/i18n/hooks/use-translation';
-import { yup } from '@libs/yup/yup.service';
-import { ro } from '@libs/i18n/yup';
-import locale from 'yup/lib/locale';
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
 export interface IRegisterComponentProps {
-  onSubmit: OnSubmitFunction<typeof RegisterUserInputSchema>
+  onSubmit: OnSubmitFunction<typeof getRegisterUserInputSchema>
 }
 
 export const RegisterComponent: React.FC<IRegisterComponentProps> = ({onSubmit}) => {
@@ -39,7 +36,7 @@ export const RegisterComponent: React.FC<IRegisterComponentProps> = ({onSubmit})
   const handleShowClick = () => setShowPassword((p) => !p);
 
   const { register, handleSubmit, getErrorMessage } = useForm({
-    schema: RegisterUserInputSchema,
+    schema: getRegisterUserInputSchema(),
 
     mode: "all"
   });

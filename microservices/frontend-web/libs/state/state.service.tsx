@@ -7,11 +7,11 @@ import { Subscriber } from './defs';
 
 @Injectable()
 export class StateService<State extends {} = any, Config extends {} = any> {
-  protected _previousState: State;
-  protected _state: State;
-  protected _config: Config;
+  private _previousState: State;
+  private _state: State;
+  private _config: Config;
 
-  protected _subscribers: Subscriber[];
+  private _subscribers: Subscriber[];
 
   constructor() {
     this._previousState = Object();
@@ -41,29 +41,11 @@ export class StateService<State extends {} = any, Config extends {} = any> {
     }
   }
 
-  public __subscribe(subscriber: Subscriber) {
+  private __subscribe(subscriber: Subscriber) {
     this._subscribers.push(subscriber);
   }
 
-  public __unsubscribe(subscriber: Subscriber) {
+  private __unsubscribe(subscriber: Subscriber) {
     this._subscribers.splice(this._subscribers.findIndex(subscriber), 1);
   }
-}
-
-export function useStateService<T extends StateService>(
-  Service: Constructor<T>,
-) {
-  const service = use(Service);
-
-  const [_, setState] = useState();
-
-  useEffect(() => {
-    service.__subscribe(setState);
-
-    return () => {
-      service.__unsubscribe(setState);
-    };
-  }, []);
-
-  return service;
 }

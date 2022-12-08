@@ -55,8 +55,8 @@ export type OnSubmitValues<R> = R extends ObjectSchema<
     }
   : any;
 
-export type OnSubmitFunction<R> = (
-  input: OnSubmitValues<R>,
+export type OnSubmitFunction<R extends (...args: any[]) => any> = (
+  input: OnSubmitValues<ReturnType<R>>,
 ) => void | Promise<void>;
 
 export interface UseFormProps<

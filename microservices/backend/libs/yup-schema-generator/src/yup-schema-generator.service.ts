@@ -164,7 +164,7 @@ export class YupSchemaGeneratorService {
 
   async writeSchema() {
     const schema = Object.keys(this.schemas)
-      .map((key) => `export const ${key}Schema = ${this.schemas[key]}`)
+      .map((key) => `export const get${key}Schema = () => ${this.schemas[key]}`)
       .join('\n\n');
 
     const fileContent = `import { yup } from '@libs/yup/yup.service';    ;

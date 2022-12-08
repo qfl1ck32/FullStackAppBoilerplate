@@ -1,3 +1,4 @@
+import { dayjs } from '@libs/dayjs/day-js.service';
 import { Injectable } from '@libs/di/decorators';
 import { yup } from '@libs/yup/yup.service';
 import Polyglot from 'node-polyglot';
@@ -44,7 +45,9 @@ export class I18NService {
 
   public onLanguageChange(language: Language) {
     this.activePolyglot = this.polyglots.get(language) as Polyglot;
+
     yup.setLocale(yupLocale[language]);
+    dayjs.locale(language);
   }
 
   public t<T extends keyof typeof translations>(

@@ -9,15 +9,15 @@ export const array: LocaleObject['array'] = {
 export const boolean: LocaleObject['boolean'] = {};
 
 export const date: LocaleObject['date'] = {
-  max: 'The field must be at earlier than ${max}',
-  min: 'The field must be later than ${min}',
+  max: 'The date must be earlier than ${max}',
+  min: 'The date must be later than ${min}',
 };
 
 export const mixed: LocaleObject['mixed'] = {
-  default: 'The field is invalid.',
+  default: 'The field is invalid',
   notOneOf: 'The field must not be one of the following values: ${values}',
   oneOf: 'The field must be one of the following values: ${values}',
-  required: 'The field is a required field',
+  required: 'The field is required',
 };
 
 export const number: LocaleObject['number'] = {
@@ -31,8 +31,7 @@ export const number: LocaleObject['number'] = {
 };
 
 export const object: LocaleObject['object'] = {
-  noUnknown:
-    'The field field cannot have keys not specified in the object shape',
+  noUnknown: 'The field cannot have keys not specified in the object shape',
 };
 
 export const string: LocaleObject['string'] = {

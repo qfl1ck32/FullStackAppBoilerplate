@@ -14,6 +14,11 @@ export default function App(props: AppProps) {
   const apolloClient = use(ApolloClient);
   const i18nService = use(I18NService)
 
+  // TODO: I'd somehow like to use the language from sessions, and only if it's not set, use the one from the router
+  // const sessionService = use(SessionService)
+
+  // const language = sessionService.get("language")
+
   const { Component, pageProps, router } = props
 
   i18nService.onLanguageChange(router.locale as Language)

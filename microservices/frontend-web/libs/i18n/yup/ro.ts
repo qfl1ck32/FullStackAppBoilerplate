@@ -9,8 +9,8 @@ export const array: LocaleObject['array'] = {
 export const boolean: LocaleObject['boolean'] = {};
 
 export const date: LocaleObject['date'] = {
-  max: 'Câmpul trebuie să fie înainte de ${max}',
-  min: 'Câmpul trebuie să fie după ${min}',
+  max: 'Data trebuie să fie înainte de ${max}',
+  min: 'Data trebuie să fie după ${min}',
 };
 
 export const mixed: LocaleObject['mixed'] = {
