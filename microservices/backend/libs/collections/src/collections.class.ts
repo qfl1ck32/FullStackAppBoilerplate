@@ -39,6 +39,7 @@ import { MONGODB_QUERY_OPERATORS, cleanDocuments } from './utils';
 import {
   DeleteOptions,
   Document,
+  FindCursor,
   FindOneAndDeleteOptions,
   InsertOneOptions,
   UpdateOptions,
@@ -254,7 +255,23 @@ export class Collection<
       isFind: true,
     });
 
-    return super.find(filter, options);
+    const result = super.find(filter, options);
+
+    const originalToArray = result.toArray.bind(result);
+
+    result.toArray = async () => {
+      const items = await originalToArray();
+
+      for (const item of items) {
+        if (options?.context?.language) {
+          this.resolveTranslatableFieldsOutput(item, options);
+        }
+      }
+
+      return items;
+    };
+
+    return result as FindCursor<WithId<DBEntity>>;
   }
 
   // @ts-ignore
@@ -272,7 +289,7 @@ export class Collection<
       }),
     );
 
-    // TODO: relatorelational filtering
+    // TODO: relational filtering
     const modifyResult = await super.findOneAndDelete(
       filter as any,
       mongoOptions,
@@ -397,8 +414,12 @@ export class Collection<
     }
   }
 
-  async queryOne(filters: Filter<DBEntity>, body: QueryBodyType<Entity>) {
-    let document = await this.findOne(filters, body._options);
+  async queryOne(
+    filters: Filter<DBEntity>,
+    body: QueryBodyType<Entity>,
+    options?: FindOptions,
+  ) {
+    let document = await this.findOne(filters, options);
 
     if (document) {
       await this._queryRec(body, document);
@@ -408,10 +429,14 @@ export class Collection<
     return document as unknown as WithId<Entity>;
   }
 
-  async query(filters: Filter<DBEntity>, body: QueryBodyType<Entity>) {
+  async query(
+    filters: Filter<DBEntity>,
+    body: QueryBodyType<Entity>,
+    options?: FindOptions,
+  ) {
     // TODO: should use projection, theoretically
     // Or, if it's faster, just clean the query up after the result :)
-    let documents = await this.find(filters, body._options).toArray();
+    let documents = await this.find(filters, options).toArray();
 
     const promises = [];
 

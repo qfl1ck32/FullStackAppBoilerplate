@@ -241,12 +241,11 @@ describe.only('Collections', () => {
   //       },
   //       {
   //         comments: {
-  //           _options: {
-  //             limit: 2,
-  //           },
-
   //           text: 1,
   //         },
+  //       },
+  //       {
+  //         limit: 2,
   //       },
   //     );
 
@@ -669,5 +668,39 @@ describe.only('Collections', () => {
       .toArray();
 
     expect(docs).toHaveLength(1);
+
+    expect(docs[0].myField).toBe('nou');
+
+    doc = await testCollection.queryOne(
+      {
+        myField: 'nou',
+      },
+      {
+        myField: 1,
+      },
+      {
+        context: {
+          language: Language.ro,
+        },
+      },
+    );
+
+    expect(doc.myField).toBe('nou');
+
+    docs = await testCollection.query(
+      {
+        myField: 'new',
+      },
+      {
+        myField: 1,
+      },
+      {
+        context: {
+          language: Language.en,
+        },
+      },
+    );
+
+    console.log(docs);
   });
 });

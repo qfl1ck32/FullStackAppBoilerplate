@@ -93,7 +93,7 @@ export type Flatten<T> = T extends (infer U)[] ? U : T;
 export type FindOptions = Pick<BaseFindOptions, 'skip' | 'limit' | 'sort'> &
   DBContext;
 
-export type QueryBodyType<T> = { _options?: FindOptions } & {
+export type QueryBodyType<T> = {
   [K in keyof T]?: T[K] extends string | number | TranslatableField
     ? SimpleFieldValue
     : QueryBodyType<Flatten<T[K]>>;
