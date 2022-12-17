@@ -1,9 +1,9 @@
 import { Event } from '@app/event-manager/event.class';
 
 import { Collection } from '../collections.class';
-import { Context } from '../defs';
+import { Context, Filter } from '../defs';
 
-import { DeleteResult, Filter } from 'mongodb';
+import { DeleteResult } from 'mongodb';
 
 export class AfterDeleteEvent<
   DBEntityType,

@@ -1,6 +1,5 @@
 import { Provider } from '@nestjs/common';
 
-import { Constructor } from '@app/core/defs';
 import { DatabaseService } from '@app/database';
 import { EventManagerService } from '@app/event-manager';
 

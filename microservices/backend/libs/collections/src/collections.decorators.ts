@@ -29,6 +29,7 @@ const RELATIONS_METADATA_KEY = 'COLLECTION.RELATIONS';
 function AddRelation<From, To>(relation: RelationArgs<From, To>) {
   // TODO: this can be optimised a bit - declare the array once, in "Relations()"
   const decoratorFactory: Decorator = (target) => {
+    console.log({ target, relation: 1 });
     const relations = Reflect.getMetadata(RELATIONS_METADATA_KEY, target);
 
     relations.push(relation);

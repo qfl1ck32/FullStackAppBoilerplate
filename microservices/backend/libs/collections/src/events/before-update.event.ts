@@ -1,9 +1,7 @@
 import { Event } from '@app/event-manager/event.class';
 
 import { Collection } from '../collections.class';
-import { Context } from '../defs';
-
-import { Filter, UpdateFilter } from 'mongodb';
+import { Context, Filter, UpdateFilter } from '../defs';
 
 export class BeforeUpdateEvent<
   DBEntityType,

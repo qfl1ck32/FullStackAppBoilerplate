@@ -1,9 +1,11 @@
 import { Constructor } from '@app/core/defs';
+import { Language } from '@app/i18n/defs';
 
 import type { Blameable } from './behaviours/blameable.behaviour';
 import type { Softdeletable } from './behaviours/softdeletable.behaviour';
 import type { Timestampable } from './behaviours/timestampable.behaviour';
 import { Collection } from './collections.class';
+import { TranslatableField } from './translatable-fields/translatable-fields.class';
 
 import { ObjectId } from 'bson';
 import {
@@ -11,8 +13,16 @@ import {
   BSONType,
   BSONTypeAlias,
   FindOptions as BaseFindOptions,
+  UpdateFilter as BaseUpdateFilter,
   BitwiseFilter,
+  Condition,
   Document,
+  Join,
+  NestedPaths,
+  OptionalId,
+  PropertyType,
+  RootFilterOperators,
+  WithId,
 } from 'mongodb';
 import 'mongoose';
 
@@ -26,6 +36,8 @@ export interface CollectionEntities<
 
 // MAGIC :)
 declare module 'mongoose' {
+  // TODO: can we get rid of ts-ignore? :))
+  // @ts-ignore
   class Collection {
     constructor(name: string, conn: Connection, opts?: any);
   }
@@ -78,10 +90,11 @@ export type SimpleFieldValue = 1 | true;
 
 export type Flatten<T> = T extends (infer U)[] ? U : T;
 
-export type FindOptions = Pick<BaseFindOptions, 'skip' | 'limit' | 'sort'>;
+export type FindOptions = Pick<BaseFindOptions, 'skip' | 'limit' | 'sort'> &
+  DBContext;
 
 export type QueryBodyType<T> = { _options?: FindOptions } & {
-  [K in keyof T]?: T[K] extends string | number
+  [K in keyof T]?: T[K] extends string | number | TranslatableField
     ? SimpleFieldValue
     : QueryBodyType<Flatten<T[K]>>;
 };
@@ -110,6 +123,7 @@ export interface Reducer<T> {
 
 export interface Context {
   userId?: ObjectId;
+  language?: Language;
 }
 
 export interface DBContext {
@@ -156,14 +170,54 @@ export declare interface FilterOperators<TValue> {
   $rand?: Record<string, never>;
 }
 
-export declare type SimpleFilter<TSchema> = TSchema extends
-  | string
-  | number
-  | Date
-  | ObjectId
+export declare type SimpleFilter<TSchema> = TSchema extends TranslatableField
+  ? FilterOperators<string>
+  : TSchema extends string | number | Date | ObjectId
   ? FilterOperators<TSchema> | TSchema
   : {
       [Property in keyof TSchema]?: TSchema[Property] extends (infer _)[]
         ? SimpleFilter<Flatten<TSchema[Property]>>
         : SimpleFilter<TSchema[Property]>;
     };
+
+export declare type FindFilter<TSchema> =
+  | Partial<TSchema>
+  | ({
+      [Property in Join<NestedPaths<WithId<TSchema>, []>, '.'>]?: Condition<
+        PropertyType<WithId<TSchema>, Property>
+      >;
+    } & RootFilterOperators<WithId<TSchema>>);
+
+export type Filter<TSchema> = FindFilter<
+  DeepReplaceTranslatableField<TSchema, true>
+>;
+
+export declare type OptionalUnlessRequiredId<TSchema> = TSchema extends {
+  _id: any;
+}
+  ? DeepReplaceTranslatableField<TSchema>
+  : DeepReplaceTranslatableField<OptionalId<TSchema>>;
+
+export type DeepReplaceTranslatableField<
+  T extends Record<any, any>,
+  OnlyString = false,
+> = {
+  [Key in keyof T]: T[Key] extends TranslatableField
+    ? OnlyString extends true
+      ? string
+      : string | TranslatableField
+    : T[Key] extends Record<any, any>
+    ? DeepReplaceTranslatableField<T[Key]>
+    : T[Key];
+};
+
+export declare type UpdateFilter<TSchema> = BaseUpdateFilter<
+  DeepReplaceTranslatableField<TSchema>
+>;
+
+export interface ResolveTranslatableFieldsArgs {
+  document: any; // TODO: type?
+  options?: Partial<DBContext>;
+  isFind?: boolean;
+  isUpdate?: boolean;
+}

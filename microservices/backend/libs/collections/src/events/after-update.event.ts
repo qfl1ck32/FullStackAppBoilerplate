@@ -1,9 +1,9 @@
 import { Event } from '@app/event-manager/event.class';
 
 import { Collection } from '../collections.class';
-import { Context } from '../defs';
+import { Context, Filter, UpdateFilter } from '../defs';
 
-import { Filter, UpdateFilter, UpdateResult } from 'mongodb';
+import { UpdateResult } from 'mongodb';
 
 export class AfterUpdateEvent<
   DBEntityType,

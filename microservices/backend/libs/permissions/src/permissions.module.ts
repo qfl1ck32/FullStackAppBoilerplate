@@ -4,7 +4,7 @@ import { registerEnumType } from '@nestjs/graphql';
 import { ProvideCollection } from '@app/collections/collections.provider';
 
 import { Role } from './defs';
-import { PermissionEntity } from './permission';
+import { PermissionEntity } from './permissions.class';
 import { PermissionsService } from './permissions.service';
 
 @Global()

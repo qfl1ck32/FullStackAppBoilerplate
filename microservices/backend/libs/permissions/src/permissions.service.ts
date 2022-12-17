@@ -8,7 +8,7 @@ import { FindPermissionInput } from './dto/find-permission.input';
 import { HasPermissionInput } from './dto/has-permission.input';
 import { RemovePermissionInput } from './dto/remove-permission.input';
 
-import { Permission } from './permission';
+import { Permission } from './permissions.class';
 
 @Injectable()
 export class PermissionsService {

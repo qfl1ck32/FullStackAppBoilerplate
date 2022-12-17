@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@app/config';
 import { PermissionsService } from '@app/permissions';
 import { Domain, Role } from '@app/permissions/defs';
-import { Permission } from '@app/permissions/permission';
+import { Permission } from '@app/permissions/permissions.class';
 
 import { LoginUserInput } from './dto/login.input';
 import { RegisterUserInput } from './dto/register.input';
@@ -54,8 +54,8 @@ describe('AuthService', () => {
     expect(permissions).toHaveLength(1);
 
     expect(permissions[0]).toMatchObject({
-      domain: Domain.APP,
-      permission: Role.END_USER,
+      domain: Domain.app,
+      permission: Role.end_user,
       userId,
     } as Partial<Permission>);
   });

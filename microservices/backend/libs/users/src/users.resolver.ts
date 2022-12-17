@@ -4,7 +4,7 @@ import { InjectCollection } from '@app/collections/collections.decorators';
 import { PermissionsService } from '@app/permissions';
 import { Role } from '@app/permissions/defs';
 
-import { User, UsersCollection } from './users';
+import { User, UsersCollection } from './users.class';
 
 @Resolver(() => User)
 export class UsersResolver {

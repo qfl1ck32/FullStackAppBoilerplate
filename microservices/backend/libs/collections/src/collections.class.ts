@@ -5,6 +5,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 import { Constructor } from '@app/core/defs';
 import { DatabaseService } from '@app/database';
 import { EventManagerService } from '@app/event-manager';
+import { Language } from '@app/i18n/defs';
 
 import { AfterDeleteEvent } from './events/after-delete.event';
 import { AfterInsertEvent } from './events/after-insert.event';
@@ -22,22 +23,24 @@ import {
   CollectionRelationType,
   CollectionRelations,
   DBContext,
+  Filter,
   FindOptions,
   ObjectId,
+  OptionalUnlessRequiredId,
   QueryBodyType,
   RelationArgs,
+  ResolveTranslatableFieldsArgs,
   SimpleFilter,
+  UpdateFilter,
 } from './defs';
+import { getTranslatableFields } from './translatable-fields/translatable-fields.decorators';
 import { MONGODB_QUERY_OPERATORS, cleanDocuments } from './utils';
 
 import {
   DeleteOptions,
   Document,
-  Filter,
   FindOneAndDeleteOptions,
   InsertOneOptions,
-  OptionalUnlessRequiredId,
-  UpdateFilter,
   UpdateOptions,
   WithId,
 } from 'mongodb';
@@ -51,8 +54,9 @@ import { Mixin, decorate } from 'ts-mixer';
 export class Collection<
   DBEntity = any,
   Entity = DBEntity,
-> extends BaseCollection<DBEntity> {
+> extends BaseCollection {
   public _relations: CollectionRelations<DBEntity>;
+  public _translatableFields: Record<string, boolean>;
 
   constructor(
     public entities: CollectionEntities<DBEntity, Entity>,
@@ -62,19 +66,31 @@ export class Collection<
   ) {
     const { relational: entity } = entities;
 
-    const behaviours = getBehavioursWithOptions(entity);
-    const relations = getRelations(entity);
-
     const name = getCollectionName(entity);
 
     super(name, databaseService.connection, {});
 
+    const behaviours = getBehavioursWithOptions(entity);
+    const relations = getRelations(entity);
+
+    const translatableFields = getTranslatableFields(entity);
+
     // TODO: why "as"? can't TS infer that {} is a subtype of CollectionRelations<T>?
     this._relations = {} as CollectionRelations<DBEntity>;
+
+    this._translatableFields = {};
 
     this._loadBehaviours(behaviours);
 
     this._initialiseRelations(relations);
+
+    this._initialiseTranslatableFields(translatableFields);
+  }
+
+  private _initialiseTranslatableFields(translatableFields: string[]) {
+    for (const fieldName of translatableFields) {
+      this._translatableFields[fieldName] = true;
+    }
   }
 
   private _loadBehaviours(behaviours: BehaviourWithOptions[]) {
@@ -111,6 +127,76 @@ export class Collection<
     return count > 0;
   }
 
+  private resolveTranslatableFieldsInput(args: ResolveTranslatableFieldsArgs) {
+    const { document, options, isFind, isUpdate } = args;
+
+    const language = options?.context?.language;
+
+    for (const fieldName in document) {
+      if (!this._translatableFields[fieldName]) {
+        continue;
+      }
+
+      if (typeof document[fieldName] === 'object') {
+        let isOk = false;
+
+        for (const language of Object.values(Language)) {
+          if (document[fieldName][language]) {
+            isOk = true;
+
+            break;
+          }
+        }
+
+        if (isOk) {
+          continue;
+        }
+      }
+
+      if (isUpdate && !language) {
+        throw new Error(
+          `Cannot update translatable field directly to a string without language specified`,
+        );
+      }
+
+      if (isFind || isUpdate) {
+        const value = document[fieldName];
+
+        delete document[fieldName];
+
+        if (!language) {
+          const $or = document['$or'] || [];
+
+          for (const language of Object.values(Language)) {
+            $or.push({
+              [`${fieldName}.${language}`]: value,
+            });
+          }
+
+          document['$or'] = $or;
+
+          continue;
+        }
+
+        document[`${fieldName}.${language}`] = value;
+      } else {
+        (document[fieldName] as any) = {
+          [language]: document[fieldName],
+        };
+      }
+    }
+  }
+
+  private resolveTranslatableFieldsOutput(document: any, options?: DBContext) {
+    const language = options?.context?.language;
+
+    for (const fieldName in this._translatableFields) {
+      if (document[fieldName]) {
+        document[fieldName] = document[fieldName][language];
+      }
+    }
+  }
+
   // TODO: we need to do this because of the types in "mongodb"... something about callbacks & deprecation & idk.
   // @ts-ignore
   async insertOne(
@@ -118,6 +204,8 @@ export class Collection<
     options: InsertOneOptions & DBContext = {},
   ) {
     const { context, ...mongoOptions } = options;
+
+    this.resolveTranslatableFieldsInput({ document, options });
 
     await this.eventManager.emit(
       new BeforeInsertEvent({
@@ -127,10 +215,7 @@ export class Collection<
       }),
     );
 
-    const insertResult = await super.insertOne(
-      document as OptionalUnlessRequiredId<DBEntity>,
-      mongoOptions,
-    );
+    const insertResult = await super.insertOne(document as any, mongoOptions);
 
     await this.eventManager.emit(
       new AfterInsertEvent({
@@ -146,11 +231,29 @@ export class Collection<
 
   // @ts-ignore
   async findOne(filter: Filter<DBEntity>, options: FindOptions = {}) {
-    return super.findOne(filter, options) as DBEntity;
+    this.resolveTranslatableFieldsInput({
+      document: filter,
+      options,
+      isFind: true,
+    });
+
+    const doc = (await super.findOne(filter, options)) as DBEntity;
+
+    if (doc && options?.context?.language) {
+      this.resolveTranslatableFieldsOutput(doc, options);
+    }
+
+    return doc;
   }
 
   // @ts-ignore
   public find(filter: Filter<DBEntity>, options: FindOptions = {}) {
+    this.resolveTranslatableFieldsInput({
+      document: filter,
+      options,
+      isFind: true,
+    });
+
     return super.find(filter, options);
   }
 
@@ -208,6 +311,12 @@ export class Collection<
         update,
       }),
     );
+
+    this.resolveTranslatableFieldsInput({
+      document: update['$set'],
+      options,
+      isUpdate: true,
+    });
 
     // TODO: types
     const updateResult = await super.updateOne(

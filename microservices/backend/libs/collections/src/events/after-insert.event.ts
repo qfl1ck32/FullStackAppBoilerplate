@@ -1,9 +1,9 @@
 import { Event } from '@app/event-manager/event.class';
 
 import { Collection } from '../collections.class';
-import { Context } from '../defs';
+import { Context, OptionalUnlessRequiredId } from '../defs';
 
-import { InsertOneResult, OptionalUnlessRequiredId } from 'mongodb';
+import { InsertOneResult } from 'mongodb';
 
 export class AfterInsertEvent<
   DBEntityType,
