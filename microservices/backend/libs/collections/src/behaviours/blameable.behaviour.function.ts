@@ -12,6 +12,9 @@ export const blameable: BehaviourFunction<
     const listener = async (event: BeforeInsertEvent<Blameable>) => {
       const { payload } = event;
 
+      // TODO: any other way to do this?
+      if (payload.collection !== collection) return;
+
       const { document, context } = payload;
 
       if (!context?.userId) {
@@ -23,6 +26,10 @@ export const blameable: BehaviourFunction<
       document.createdByUserId = context?.userId;
     };
 
-    return collection.eventManager.addListener(BeforeInsertEvent, listener);
+    // TODO: then, does it make sense to have it here as local?
+    return collection.localEventManager.addListener(
+      BeforeInsertEvent,
+      listener,
+    );
   };
 };

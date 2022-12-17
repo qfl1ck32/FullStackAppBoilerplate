@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Constructor } from '@app/core/defs';
@@ -22,3 +22,6 @@ export class EventManagerService {
     return this.eventEmitter.addListener(event.name, listener);
   }
 }
+
+@Injectable({ scope: Scope.TRANSIENT })
+export class LocalEventManagerService extends EventManagerService {}

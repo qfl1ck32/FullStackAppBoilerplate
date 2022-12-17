@@ -1,7 +1,10 @@
 import { Provider } from '@nestjs/common';
 
 import { DatabaseService } from '@app/database';
-import { EventManagerService } from '@app/event-manager';
+import {
+  EventManagerService,
+  LocalEventManagerService,
+} from '@app/event-manager';
 
 import { Collection } from './collections.class';
 import { CollectionsStorage } from './collections.storage';
@@ -19,12 +22,14 @@ export function ProvideCollection<DBEntityType, EntityType>(
     useFactory: (
       collectionsStorage: CollectionsStorage,
       databaseService: DatabaseService,
+      localEventManagerService: LocalEventManagerService,
       eventManager: EventManagerService,
     ) => {
       const collection = new Collection(
         entities,
         collectionsStorage,
         databaseService,
+        localEventManagerService,
         eventManager,
       );
 
@@ -33,6 +38,11 @@ export function ProvideCollection<DBEntityType, EntityType>(
       return collection;
     },
 
-    inject: [CollectionsStorage, DatabaseService, EventManagerService],
+    inject: [
+      CollectionsStorage,
+      DatabaseService,
+      LocalEventManagerService,
+      EventManagerService,
+    ],
   } as Provider;
 }

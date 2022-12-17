@@ -4,7 +4,10 @@ import { Prop, Schema } from '@nestjs/mongoose';
 
 import { Constructor } from '@app/core/defs';
 import { DatabaseService } from '@app/database';
-import { EventManagerService } from '@app/event-manager';
+import {
+  EventManagerService,
+  LocalEventManagerService,
+} from '@app/event-manager';
 import { Language } from '@app/i18n/defs';
 
 import { AfterDeleteEvent } from './events/after-delete.event';
@@ -63,6 +66,7 @@ export class Collection<
     public entities: CollectionEntities<DBEntity, Entity>,
     private collectionsStorage: CollectionsStorage,
     public readonly databaseService: DatabaseService,
+    public readonly localEventManager: LocalEventManagerService,
     public readonly eventManager: EventManagerService,
   ) {
     const { relational: entity } = entities;
@@ -95,9 +99,7 @@ export class Collection<
   }
 
   private _loadBehaviours(behaviours: BehaviourWithOptions[]) {
-    behaviours.forEach((behaviour) =>
-      behaviour.behaviour(behaviour.options)(this),
-    );
+    behaviours.forEach((item) => item.behaviour(item.options)(this));
   }
 
   private async _initialiseRelations(relations: RelationArgs[]) {
@@ -596,7 +598,7 @@ export class Entity {
   _id: ObjectId;
 }
 
-export const Mix = Mixin;
+export const Combine = Mixin;
 
 export function getCollectionName<T>(entity: Constructor<T>) {
   return pluralize(entity.name.toLowerCase());

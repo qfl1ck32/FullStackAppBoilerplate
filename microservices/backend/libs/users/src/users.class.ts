@@ -2,7 +2,11 @@ import { blameable } from '@app/collections/behaviours/blameable.behaviour.funct
 import { softdeletable } from '@app/collections/behaviours/softdeletable.behaviour.function';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { AddBehaviour } from '@app/collections/behaviours/utils';
-import { Collection, Entity, Mix } from '@app/collections/collections.class';
+import {
+  Collection,
+  Combine,
+  Entity,
+} from '@app/collections/collections.class';
 import {
   Field,
   ObjectType,
@@ -73,7 +77,7 @@ export class DBUser extends Entity {
     to: () => User,
   })
   .build()
-export class User extends Mix(DBUser, Timestampable) {
+export class User extends Combine(DBUser, Timestampable) {
   // TODO: we have to manually assign blameable and softdeletable, sadly,
   // because of circular dependency
 

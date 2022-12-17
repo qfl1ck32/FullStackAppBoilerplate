@@ -7,7 +7,7 @@ import { EventManagerModule } from '@app/event-manager';
 import { Language } from '@app/i18n/defs';
 
 import { Timestampable } from './behaviours/timestampable.behaviour';
-import { Collection, Entity, Mix } from './collections.class';
+import { Collection, Combine, Entity } from './collections.class';
 import { Relations } from './collections.decorators';
 import { CollectionsModule } from './collections.module';
 import { ProvideCollection } from './collections.provider';

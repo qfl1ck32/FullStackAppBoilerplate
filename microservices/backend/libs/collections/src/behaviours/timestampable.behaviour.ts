@@ -39,7 +39,10 @@ export const timestampable: BehaviourFunction<
       document.updatedAt = date;
     };
 
-    return collection.eventManager.addListener(BeforeInsertEvent, listener);
+    return collection.localEventManager.addListener(
+      BeforeInsertEvent,
+      listener,
+    );
   };
 };
 
