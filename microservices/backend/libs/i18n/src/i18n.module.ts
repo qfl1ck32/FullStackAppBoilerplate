@@ -1,6 +1,7 @@
 import { DynamicModule } from '@nestjs/common';
 import { Global, Module } from '@nestjs/common';
-import { registerEnumType } from '@nestjs/graphql';
+
+import { registerEnumType } from '@app/graphql/defs';
 
 import { Language } from './defs';
 import { I18nService } from './i18n.service';
@@ -9,9 +10,7 @@ import { I18nService } from './i18n.service';
 @Module({})
 export class I18nModule {
   static forRoot(): DynamicModule {
-    registerEnumType(Language, {
-      name: 'Language',
-    });
+    registerEnumType({ Language });
 
     return {
       module: I18nModule,
