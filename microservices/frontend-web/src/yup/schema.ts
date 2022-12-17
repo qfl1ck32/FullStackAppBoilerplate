@@ -16,3 +16,7 @@ export const getRegisterUserInputSchema = () => yup.object().shape({
   email: yup.string().email().required(),
   password: yup.string().max(12).min(8).required()
 })
+
+export const getEndUsersTodosCreateInputSchema = () => yup.object().shape({
+  title: yup.string().required()
+})

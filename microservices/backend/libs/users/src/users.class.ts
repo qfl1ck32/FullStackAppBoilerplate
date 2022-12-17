@@ -1,20 +1,18 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Prop, Schema } from '@nestjs/mongoose';
-
 import { blameable } from '@app/collections/behaviours/blameable.behaviour.function';
 import { softdeletable } from '@app/collections/behaviours/softdeletable.behaviour.function';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { AddBehaviour } from '@app/collections/behaviours/utils';
 import { Collection, Entity, Mix } from '@app/collections/collections.class';
 import {
-  MixField,
-  MixObjectType,
-  MixProp,
-  MixSchema,
+  Field,
+  ObjectType,
+  Prop,
   Relations,
+  Schema,
 } from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
 import { createEntity } from '@app/collections/utils';
+import { Id } from '@app/graphql/defs';
 import { Language } from '@app/i18n/defs';
 import { Role } from '@app/permissions/defs';
 
@@ -28,32 +26,30 @@ export class UserPassword {
   emailVerificationToken?: string;
 }
 
-@MixObjectType()
-@MixSchema()
 export class DBUser extends Entity {
-  @MixField(() => String)
-  @MixProp()
+  @Field(() => String)
+  @Prop()
   firstName: string;
 
-  @MixField(() => String)
-  @MixProp()
+  @Field(() => String)
+  @Prop()
   lastName: string;
 
-  @MixField(() => String)
-  @MixProp()
+  @Field(() => String)
+  @Prop()
   username: string;
 
-  @MixField(() => String)
-  @MixProp()
+  @Field(() => String)
+  @Prop()
   email: string;
 
-  @MixField(() => [Role])
+  @Field(() => [Role])
   roles: Role[];
 
-  @MixField(() => Language)
+  @Field(() => Language)
   preferredLanguage: Language;
 
-  @MixProp()
+  @Prop()
   password: UserPassword;
 }
 
@@ -93,7 +89,7 @@ export class User extends Mix(DBUser, Timestampable) {
   @Prop()
   deletedAt?: Date;
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => Id, { nullable: true })
   @Prop()
   deletedByUserId?: ObjectId;
 
@@ -104,7 +100,7 @@ export class User extends Mix(DBUser, Timestampable) {
    * Blameable
    */
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => Id, { nullable: true })
   @Prop()
   createdByUserId?: ObjectId;
 

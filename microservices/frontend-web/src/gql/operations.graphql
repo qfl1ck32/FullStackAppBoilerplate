@@ -12,3 +12,11 @@ mutation LoginUser($input: LoginUserInput!) {
     refreshToken
   }
 }
+
+mutation CreateTodo($input: EndUsersTodosCreateInput!) {
+  endUsersCreateTodo(input: $input) {
+    _id
+    title
+    isCompleted
+  }
+}

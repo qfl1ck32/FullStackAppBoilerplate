@@ -1,14 +1,14 @@
-import { MixField, MixObjectType, MixProp, MixSchema } from "@app/collections/collections.decorators";
+import { Field, ObjectType, Prop, Schema } from "@app/collections/collections.decorators";
 import { Language } from "@app/i18n/defs";
 
-@MixObjectType()
-@MixSchema()
+@ObjectType()
+@Schema()
 export class TranslatableField {
-    @MixField(() => String, { nullable: true })
-    @MixProp()
+    @Field(() => String, { nullable: true })
+    @Prop()
     [Language.ro]?: string
 
-    @MixField(() => String, { nullable: true })
-    @MixProp()
+    @Field(() => String, { nullable: true })
+    @Prop()
     [Language.en]?: string;
 }

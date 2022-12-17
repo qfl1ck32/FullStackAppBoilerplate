@@ -17,6 +17,8 @@ import {
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { EndUsersModule } from './end-users/end-users.module';
+import { TodosModule } from './todos/todos.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { AppService } from './app.service';
 
     PermissionsModule.forRoot(),
     I18nModule.forRoot(),
+    TodosModule,
+    EndUsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

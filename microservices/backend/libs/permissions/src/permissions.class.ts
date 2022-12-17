@@ -1,9 +1,8 @@
-import { Prop, Schema } from '@nestjs/mongoose';
-
 import { Blameable } from '@app/collections/behaviours/blameable.behaviour';
 import { Softdeletable } from '@app/collections/behaviours/softdeletable.behaviour';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { Entity, Mix } from '@app/collections/collections.class';
+import { Prop, Schema } from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
 import { createEntity } from '@app/collections/utils';
 

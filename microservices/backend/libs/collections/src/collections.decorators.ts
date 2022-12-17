@@ -1,15 +1,15 @@
 import { Inject, applyDecorators } from '@nestjs/common';
 import {
   Field as BaseField,
+  ObjectType as BaseObjectType,
   FieldOptions,
-  ObjectType,
   ObjectTypeOptions,
   ReturnTypeFunc,
 } from '@nestjs/graphql';
 import {
   Prop as BaseProp,
+  Schema as BaseSchema,
   PropOptions,
-  Schema,
   SchemaOptions,
 } from '@nestjs/mongoose';
 
@@ -74,21 +74,21 @@ export function getRelations<T>(entity: Constructor<T>) {
   );
 }
 
-export const MixField = (
+export const Field = (
   returnTypeFunction?: ReturnTypeFunc,
   options?: FieldOptions,
 ) => {
   return decorate(BaseField(returnTypeFunction, options));
 };
 
-export const MixProp = (options?: PropOptions) => {
+export const Prop = (options?: PropOptions) => {
   return decorate(BaseProp(options));
 };
 
-export const MixObjectType = (options?: ObjectTypeOptions) => {
-  return decorate(ObjectType(options));
+export const ObjectType = (options?: ObjectTypeOptions) => {
+  return decorate(BaseObjectType(options));
 };
 
-export const MixSchema = (options?: SchemaOptions) => {
-  return decorate(Schema(options));
+export const Schema = (options?: SchemaOptions) => {
+  return decorate(BaseSchema(options));
 };

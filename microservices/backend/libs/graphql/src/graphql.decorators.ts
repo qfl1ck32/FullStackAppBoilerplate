@@ -1,6 +1,7 @@
 import { SetMetadata, UseGuards, applyDecorators } from '@nestjs/common';
-import { Context } from '@nestjs/graphql';
+import { Args as BaseArgs, Context } from '@nestjs/graphql';
 
+import { Decorator } from '@app/core/defs';
 import { Role } from '@app/permissions/defs';
 
 import { ROLES_KEY } from './defs';
@@ -12,4 +13,21 @@ export const RequireRoles = (role: Role | Role[]) => {
   return applyDecorators(SetMetadata(ROLES_KEY, roles), UseGuards(RolesGuard));
 };
 
-export const UserId = () => Context('userId');
+export const GetInput = () => {
+  const decorator: ParameterDecorator = (
+    target,
+    propertyKey,
+    parameterIndex,
+  ) => {
+    BaseArgs({
+      name: 'input',
+    })(target, propertyKey, parameterIndex);
+
+    return target;
+  };
+
+  return applyDecorators(decorator as any) as ParameterDecorator;
+};
+
+export const GetUserId = () => Context('userId');
+export const GetLanguage = () => Context('language');

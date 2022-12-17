@@ -16,6 +16,10 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type EndUsersTodosCreateInput = {
+  title: Scalars['String'];
+};
+
 export type IssueAccessTokenInput = {
   refreshToken: Scalars['String'];
 };
@@ -38,8 +42,14 @@ export type LoginUserResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  endUsersCreateTodo: Todo;
   login: LoginUserResponse;
   register: Scalars['Boolean'];
+};
+
+
+export type MutationEndUsersCreateTodoArgs = {
+  input: EndUsersTodosCreateInput;
 };
 
 
@@ -76,6 +86,21 @@ export enum Role {
   Admin = 'admin',
   EndUser = 'end_user'
 }
+
+export type Todo = {
+  __typename?: 'Todo';
+  _id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  createdByUser: User;
+  createdByUserId: Scalars['ID'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  deletedByUser?: Maybe<User>;
+  deletedByUserId?: Maybe<Scalars['ID']>;
+  isCompleted: Scalars['Boolean'];
+  isDeleted?: Maybe<Scalars['Boolean']>;
+  title: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
 
 export type User = {
   __typename?: 'User';
@@ -116,6 +141,13 @@ export type LoginUserMutationVariables = Exact<{
 
 
 export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginUserResponse', accessToken: string, refreshToken: string } };
+
+export type CreateTodoMutationVariables = Exact<{
+  input: EndUsersTodosCreateInput;
+}>;
+
+
+export type CreateTodoMutation = { __typename?: 'Mutation', endUsersCreateTodo: { __typename?: 'Todo', _id: string, title: string, isCompleted: boolean } };
 
 
 export const IssueAccessTokenDocument = gql`
@@ -216,3 +248,38 @@ export function useLoginUserMutation(baseOptions?: Apollo.MutationHookOptions<Lo
 export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
 export type LoginUserMutationResult = Apollo.MutationResult<LoginUserMutation>;
 export type LoginUserMutationOptions = Apollo.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
+export const CreateTodoDocument = gql`
+    mutation CreateTodo($input: EndUsersTodosCreateInput!) {
+  endUsersCreateTodo(input: $input) {
+    _id
+    title
+    isCompleted
+  }
+}
+    `;
+export type CreateTodoMutationFn = Apollo.MutationFunction<CreateTodoMutation, CreateTodoMutationVariables>;
+
+/**
+ * __useCreateTodoMutation__
+ *
+ * To run a mutation, you first call `useCreateTodoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTodoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTodoMutation, { data, loading, error }] = useCreateTodoMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTodoMutation(baseOptions?: Apollo.MutationHookOptions<CreateTodoMutation, CreateTodoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTodoMutation, CreateTodoMutationVariables>(CreateTodoDocument, options);
+      }
+export type CreateTodoMutationHookResult = ReturnType<typeof useCreateTodoMutation>;
+export type CreateTodoMutationResult = Apollo.MutationResult<CreateTodoMutation>;
+export type CreateTodoMutationOptions = Apollo.BaseMutationOptions<CreateTodoMutation, CreateTodoMutationVariables>;

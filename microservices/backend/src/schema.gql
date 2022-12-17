@@ -40,6 +40,20 @@ type LoginUserResponse {
   refreshToken: String!
 }
 
+type Todo {
+  _id: ID!
+  title: String!
+  isCompleted: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean
+  deletedAt: DateTime
+  deletedByUserId: ID
+  deletedByUser: User
+  createdByUserId: ID!
+  createdByUser: User!
+}
+
 type Query {
   framework: String!
   issueAccessToken(input: IssueAccessTokenInput!): String!
@@ -53,6 +67,7 @@ input IssueAccessTokenInput {
 type Mutation {
   register(input: RegisterUserInput!): Boolean!
   login(input: LoginUserInput!): LoginUserResponse!
+  endUsersCreateTodo(input: EndUsersTodosCreateInput!): Todo!
 }
 
 input RegisterUserInput {
@@ -66,4 +81,8 @@ input RegisterUserInput {
 input LoginUserInput {
   usernameOrEmail: String!
   password: String!
+}
+
+input EndUsersTodosCreateInput {
+  title: String!
 }
