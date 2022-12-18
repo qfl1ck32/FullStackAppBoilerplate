@@ -8,3 +8,16 @@ declare module '@app/config/defs' {
     APP_PORT: number;
   }
 }
+
+export enum Language {
+  ro = 'ro',
+  en = 'en',
+  de = 'de',
+  br = 'br',
+}
+
+export enum Role {
+  admin = 'admin',
+  end_user = 'end_user',
+  hacker = 'hacker',
+}

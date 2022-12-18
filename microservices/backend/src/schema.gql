@@ -23,11 +23,14 @@ type User {
 enum Role {
   admin
   end_user
+  hacker
 }
 
 enum Language {
-  en
   ro
+  en
+  de
+  br
 }
 
 """
@@ -40,9 +43,14 @@ type LoginUserResponse {
   refreshToken: String!
 }
 
+type TranslatableField {
+  en: String
+  ro: String
+}
+
 type Todo {
   _id: ID!
-  title: String!
+  title: TranslatableField!
   isCompleted: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!

@@ -17,6 +17,8 @@ import {
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import './defs';
+import { Language, Role } from './defs';
 import { EndUsersModule } from './end-users/end-users.module';
 import { TodosModule } from './todos/todos.module';
 
@@ -33,8 +35,13 @@ import { TodosModule } from './todos/todos.module';
 
     LoggerModule,
 
-    PermissionsModule.forRoot(),
-    I18nModule.forRoot(),
+    PermissionsModule.forRoot({
+      roleRef: Role,
+    }),
+
+    I18nModule.forRoot({
+      languageRef: Language,
+    }),
     TodosModule,
     EndUsersModule,
   ],

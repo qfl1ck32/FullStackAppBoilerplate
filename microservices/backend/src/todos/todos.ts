@@ -22,7 +22,7 @@ import { EndUser } from '@root/end-users/end-users';
 
 export class DBTodo {
   @Translatable()
-  @Field(() => String)
+  @Field(() => TranslatableField)
   @Prop()
   title: TranslatableField;
 
