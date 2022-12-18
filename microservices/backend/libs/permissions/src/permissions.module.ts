@@ -4,7 +4,7 @@ import { ProvideCollection } from '@app/collections/collections.provider';
 import { registerEnumType } from '@app/graphql/defs';
 
 import { PermissionsModuleForRootArgs, Role } from './defs';
-import { PermissionEntity } from './permissions.class';
+import { PermissionEntity } from './permissions';
 import { PermissionsService } from './permissions.service';
 
 import { replaceEnumAtRuntime } from 'libs/core/core.utils';

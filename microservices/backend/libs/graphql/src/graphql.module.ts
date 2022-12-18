@@ -3,7 +3,7 @@ import { Global, Module } from '@nestjs/common';
 import { GraphQLModule as GQLModule } from '@nestjs/graphql';
 
 import { ObjectId } from '@app/collections/defs';
-import { Exception } from '@app/exceptions/exception.class';
+import { Exception } from '@app/exceptions/exception';
 import { Language } from '@app/i18n/defs';
 
 import { GQLContext } from './defs';

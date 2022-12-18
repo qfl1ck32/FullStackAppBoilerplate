@@ -7,13 +7,13 @@ import { EventManagerModule } from '@app/event-manager';
 import { Language } from '@app/i18n/defs';
 
 import { Timestampable } from './behaviours/timestampable.behaviour';
-import { Collection, Combine, Entity } from './collections.class';
+import { Collection, Combine, Entity } from './collections';
 import { Relations } from './collections.decorators';
 import { CollectionsModule } from './collections.module';
 import { ProvideCollection } from './collections.provider';
 import { CollectionsStorage } from './collections.storage';
 import { CollectionEntities, ObjectId } from './defs';
-import { TranslatableField } from './translatable-fields/translatable-fields.class';
+import { TranslatableField } from './translatable-fields/translatable-fields';
 import {
   Translatable,
   getTranslatableFields,

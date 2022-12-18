@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Constructor } from '@app/core/defs';
 
-import { Event } from './event.class';
+import { Event } from './event';
 
 export type ListenerFn<T> = (payload: T) => void | Promise<void>;
 

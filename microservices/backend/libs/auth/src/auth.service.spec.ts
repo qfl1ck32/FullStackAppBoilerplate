@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@app/config';
 import { PermissionsService } from '@app/permissions';
 import { Domain, Role } from '@app/permissions/defs';
-import { Permission } from '@app/permissions/permissions.class';
+import { Permission } from '@app/permissions/permissions';
 
 import { LoginUserInput } from './dto/login.input';
 import { RegisterUserInput } from './dto/register.input';

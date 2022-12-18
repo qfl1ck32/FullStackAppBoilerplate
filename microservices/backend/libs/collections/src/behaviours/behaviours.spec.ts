@@ -10,7 +10,7 @@ import { Softdeletable } from './softdeletable.behaviour';
 import { Timestampable } from './timestampable.behaviour';
 import { SetBehaviourOptions } from './utils';
 
-import { Collection } from '../collections.class';
+import { Collection } from '../collections';
 import { ProvideCollection } from '../collections.provider';
 import { CollectionsStorage } from '../collections.storage';
 import { CollectionEntities, ObjectId } from '../defs';

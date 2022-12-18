@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Collection } from '@app/collections/collections.class';
+import { Collection } from '@app/collections/collections';
 import { InjectCollection } from '@app/collections/collections.decorators';
 
 import { AddPermissionInput } from './dto/add-permission.input';
@@ -8,7 +8,7 @@ import { FindPermissionInput } from './dto/find-permission.input';
 import { HasPermissionInput } from './dto/has-permission.input';
 import { RemovePermissionInput } from './dto/remove-permission.input';
 
-import { Permission } from './permissions.class';
+import { Permission } from './permissions';
 
 @Injectable()
 export class PermissionsService {

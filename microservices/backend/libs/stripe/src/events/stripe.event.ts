@@ -1,4 +1,4 @@
-import { Event } from '@app/event-manager/event.class';
+import { Event } from '@app/event-manager/event';
 
 import Stripe from 'stripe';
 

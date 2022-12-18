@@ -6,7 +6,7 @@ import {
 } from '@app/collections/collections.decorators';
 import { Language } from '@app/i18n/defs';
 
-import { Combine } from '../collections.class';
+import { Combine } from '../collections';
 
 // @ObjectType()
 // @Schema()

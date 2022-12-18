@@ -1,11 +1,7 @@
 import { Blameable } from '@app/collections/behaviours/blameable.behaviour';
 import { Softdeletable } from '@app/collections/behaviours/softdeletable.behaviour';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
-import {
-  Collection,
-  Combine,
-  Entity,
-} from '@app/collections/collections.class';
+import { Collection, Combine, Entity } from '@app/collections/collections';
 import {
   Field,
   ObjectType,
@@ -14,7 +10,7 @@ import {
   Schema,
 } from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
-import { TranslatableField } from '@app/collections/translatable-fields/translatable-fields.class';
+import { TranslatableField } from '@app/collections/translatable-fields/translatable-fields';
 import { Translatable } from '@app/collections/translatable-fields/translatable-fields.decorators';
 import { createEntity } from '@app/collections/utils';
 

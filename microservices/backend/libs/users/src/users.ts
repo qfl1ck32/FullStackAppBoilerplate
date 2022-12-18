@@ -2,11 +2,7 @@ import { blameable } from '@app/collections/behaviours/blameable.behaviour.funct
 import { softdeletable } from '@app/collections/behaviours/softdeletable.behaviour.function';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
 import { AddBehaviour } from '@app/collections/behaviours/utils';
-import {
-  Collection,
-  Combine,
-  Entity,
-} from '@app/collections/collections.class';
+import { Collection, Combine, Entity } from '@app/collections/collections';
 import {
   Field,
   ObjectType,

@@ -1,6 +1,6 @@
-import { Event } from '@app/event-manager/event.class';
+import { Event } from '@app/event-manager/event';
 
-import { Collection } from '../collections.class';
+import { Collection } from '../collections';
 import { Context, Filter, UpdateFilter } from '../defs';
 
 import { UpdateResult } from 'mongodb';

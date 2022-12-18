@@ -1,7 +1,7 @@
 import { Blameable } from '@app/collections/behaviours/blameable.behaviour';
 import { Softdeletable } from '@app/collections/behaviours/softdeletable.behaviour';
 import { Timestampable } from '@app/collections/behaviours/timestampable.behaviour';
-import { Combine, Entity } from '@app/collections/collections.class';
+import { Combine, Entity } from '@app/collections/collections';
 import { Prop, Schema } from '@app/collections/collections.decorators';
 import { ObjectId } from '@app/collections/defs';
 import { createEntity } from '@app/collections/utils';

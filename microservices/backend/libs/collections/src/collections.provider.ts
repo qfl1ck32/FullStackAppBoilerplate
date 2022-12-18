@@ -6,7 +6,7 @@ import {
   LocalEventManagerService,
 } from '@app/event-manager';
 
-import { Collection } from './collections.class';
+import { Collection } from './collections';
 import { CollectionsStorage } from './collections.storage';
 import { CollectionEntities } from './defs';
 import { getCollectionToken } from './utils';

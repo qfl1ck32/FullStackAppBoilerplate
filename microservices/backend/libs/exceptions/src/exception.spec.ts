@@ -1,4 +1,4 @@
-import { Exception } from './exception.class';
+import { Exception } from './exception';
 
 describe('Exception', () => {
   it('should be defined', () => {

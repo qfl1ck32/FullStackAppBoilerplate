@@ -4,8 +4,8 @@ import { Language } from '@app/i18n/defs';
 import type { Blameable } from './behaviours/blameable.behaviour';
 import type { Softdeletable } from './behaviours/softdeletable.behaviour';
 import type { Timestampable } from './behaviours/timestampable.behaviour';
-import { Collection } from './collections.class';
-import { TranslatableField } from './translatable-fields/translatable-fields.class';
+import { Collection } from './collections';
+import { TranslatableField } from './translatable-fields/translatable-fields';
 
 import { ObjectId } from 'bson';
 import {
