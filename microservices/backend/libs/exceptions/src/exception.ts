@@ -26,7 +26,7 @@ export class Exception<TData extends Record<string, any> = null> extends Error {
     return this.metadata || null;
   }
 
-  constructor(...args: TData extends null ? [] : [TData]) {
+  constructor(...args: TData extends null ? never : [TData]) {
     super();
 
     const message = this.getMessage();
