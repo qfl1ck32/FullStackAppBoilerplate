@@ -12,6 +12,7 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   _id: ID!
+  fullName: String!
   isDeleted: Boolean
   deletedAt: DateTime
   deletedByUserId: ID
@@ -23,14 +24,11 @@ type User {
 enum Role {
   admin
   end_user
-  hacker
 }
 
 enum Language {
   ro
   en
-  de
-  br
 }
 
 """

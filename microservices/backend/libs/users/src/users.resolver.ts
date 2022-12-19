@@ -24,4 +24,9 @@ export class UsersResolver {
 
     return this.permissionsService.find({ userId });
   }
+
+  @ResolveField(() => String)
+  async fullName(parent: User) {
+    return `${parent.firstName} ${parent.lastName}`;
+  }
 }

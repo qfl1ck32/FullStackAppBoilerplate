@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { TypeMetadataStorage } from '@nestjs/graphql';
 import { MetadataByTargetCollection } from '@nestjs/graphql/dist/schema-builder/collections';
 
+import { Writer } from '@app/core/models/writer';
+import { LoggerService } from '@app/logger';
+
+import { GenerateSchemaArgs } from './defs';
+
 import {
   IS_ALPHA,
   IS_ARRAY,
@@ -14,10 +19,9 @@ import {
 } from 'class-validator';
 import { ConstraintMetadata } from 'class-validator/types/metadata/ConstraintMetadata';
 import { ValidationMetadata } from 'class-validator/types/metadata/ValidationMetadata';
-import { writeFileSync } from 'fs';
 
 @Injectable()
-export class YupSchemaGeneratorService {
+export class YupService extends Writer {
   private validationMetadatas: Record<string, ValidationMetadata[]>;
 
   private constraintMetadatasArray: ConstraintMetadata[];
@@ -26,7 +30,9 @@ export class YupSchemaGeneratorService {
 
   private schemas: Record<string, string>;
 
-  private writePaths: string[];
+  constructor(protected readonly loggerService: LoggerService) {
+    super();
+  }
 
   async init() {
     this.validationMetadatas = {};
@@ -54,11 +60,11 @@ export class YupSchemaGeneratorService {
     ).constraintMetadatas;
 
     this.schemas = {};
-
-    this.writePaths = ['../frontend-web/src/yup/schema.ts'];
   }
 
-  async generateSchema() {
+  async generateSchema(args: GenerateSchemaArgs) {
+    super.initialise(args);
+
     const targets = this.graphqlFieldsStorage.all.inputType.map(
       (item) => item.target,
     );
@@ -66,9 +72,13 @@ export class YupSchemaGeneratorService {
     await Promise.all(
       targets.map((target) => this.generateSchemaForClass(target)),
     );
+
+    await this.writeSchema();
+
+    this.loggerService.info('Success');
   }
 
-  async generateSchemaForClass(InputClass: Function) {
+  private async generateSchemaForClass(InputClass: Function) {
     const finalYupFields = [];
 
     const name = InputClass.name;
@@ -162,17 +172,15 @@ export class YupSchemaGeneratorService {
     this.schemas[name] = result;
   }
 
-  async writeSchema() {
+  private async writeSchema() {
     const schema = Object.keys(this.schemas)
       .map((key) => `export const get${key}Schema = () => ${this.schemas[key]}`)
       .join('\n\n');
 
-    const fileContent = `import { yup } from '@libs/yup/yup.service';    ;
+    const content = `import { yup } from '@libs/yup/yup.service';
 
 ${schema}`;
 
-    for (const path of this.writePaths) {
-      writeFileSync(path, fileContent);
-    }
+    this.write(content);
   }
 }

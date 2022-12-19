@@ -74,6 +74,9 @@ export class DBUser extends Entity {
   })
   .build()
 export class User extends Combine(DBUser, Timestampable) {
+  @Field(() => String)
+  fullName: String;
+
   // TODO: we have to manually assign blameable and softdeletable, sadly,
   // because of circular dependency
 

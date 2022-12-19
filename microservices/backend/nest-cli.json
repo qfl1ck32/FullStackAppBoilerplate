@@ -111,13 +111,13 @@
         "tsConfigPath": "libs/stripe/tsconfig.lib.json"
       }
     },
-    "yup-schema-generator": {
+    "yup": {
       "type": "library",
-      "root": "libs/yup-schema-generator",
+      "root": "libs/yup",
       "entryFile": "index",
-      "sourceRoot": "libs/yup-schema-generator/src",
+      "sourceRoot": "libs/yup/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/yup-schema-generator/tsconfig.lib.json"
+        "tsConfigPath": "libs/yup/tsconfig.lib.json"
       }
     },
     "i18n": {

@@ -66,6 +66,7 @@ export type Query = {
   __typename?: 'Query';
   framework: Scalars['String'];
   getUser: User;
+  getYupSchema: Scalars['String'];
   issueAccessToken: Scalars['String'];
 };
 
@@ -113,6 +114,7 @@ export type User = {
   deletedByUserId?: Maybe<Scalars['ID']>;
   email: Scalars['String'];
   firstName: Scalars['String'];
+  fullName: Scalars['String'];
   isDeleted?: Maybe<Scalars['Boolean']>;
   lastName: Scalars['String'];
   preferredLanguage: Language;
@@ -148,6 +150,11 @@ export type CreateTodoMutationVariables = Exact<{
 
 
 export type CreateTodoMutation = { __typename?: 'Mutation', endUsersCreateTodo: { __typename?: 'Todo', _id: string, title: string, isCompleted: boolean } };
+
+export type GetYupSchemaQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetYupSchemaQuery = { __typename?: 'Query', getYupSchema: string };
 
 
 export const IssueAccessTokenDocument = gql`
@@ -283,3 +290,35 @@ export function useCreateTodoMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateTodoMutationHookResult = ReturnType<typeof useCreateTodoMutation>;
 export type CreateTodoMutationResult = Apollo.MutationResult<CreateTodoMutation>;
 export type CreateTodoMutationOptions = Apollo.BaseMutationOptions<CreateTodoMutation, CreateTodoMutationVariables>;
+export const GetYupSchemaDocument = gql`
+    query GetYupSchema {
+  getYupSchema
+}
+    `;
+
+/**
+ * __useGetYupSchemaQuery__
+ *
+ * To run a query within a React component, call `useGetYupSchemaQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetYupSchemaQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetYupSchemaQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetYupSchemaQuery(baseOptions?: Apollo.QueryHookOptions<GetYupSchemaQuery, GetYupSchemaQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetYupSchemaQuery, GetYupSchemaQueryVariables>(GetYupSchemaDocument, options);
+      }
+export function useGetYupSchemaLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetYupSchemaQuery, GetYupSchemaQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetYupSchemaQuery, GetYupSchemaQueryVariables>(GetYupSchemaDocument, options);
+        }
+export type GetYupSchemaQueryHookResult = ReturnType<typeof useGetYupSchemaQuery>;
+export type GetYupSchemaLazyQueryHookResult = ReturnType<typeof useGetYupSchemaLazyQuery>;
+export type GetYupSchemaQueryResult = Apollo.QueryResult<GetYupSchemaQuery, GetYupSchemaQueryVariables>;

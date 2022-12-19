@@ -4,16 +4,14 @@ import { AuthModule } from '@app/auth';
 import { CollectionsModule } from '@app/collections';
 import { ConfigModule } from '@app/config';
 import { DatabaseModule } from '@app/database';
+import { ExceptionsModule } from '@app/exceptions';
+import { ExceptionsService } from '@app/exceptions/exceptions.service';
 import { GraphQLModule } from '@app/graphql';
 import { I18nModule } from '@app/i18n';
 import { LoggerModule } from '@app/logger';
 import { PermissionsModule } from '@app/permissions';
 import { StripeModule } from '@app/stripe';
 import { UsersModule } from '@app/users';
-import {
-  YupSchemaGeneratorModule,
-  YupSchemaGeneratorService,
-} from '@app/yup-schema-generator';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -21,6 +19,8 @@ import './defs';
 import { Language, Role } from './defs';
 import { EndUsersModule } from './end-users/end-users.module';
 import { TodosModule } from './todos/todos.module';
+
+import { YupModule, YupService } from 'libs/yup/src';
 
 @Module({
   imports: [
@@ -31,8 +31,8 @@ import { TodosModule } from './todos/todos.module';
     StripeModule,
     AuthModule,
     UsersModule,
-    YupSchemaGeneratorModule,
-
+    YupModule,
+    ExceptionsModule,
     LoggerModule,
 
     PermissionsModule.forRoot({
@@ -42,6 +42,7 @@ import { TodosModule } from './todos/todos.module';
     I18nModule.forRoot({
       languageRef: Language,
     }),
+
     TodosModule,
     EndUsersModule,
   ],
@@ -50,17 +51,24 @@ import { TodosModule } from './todos/todos.module';
 })
 export class AppModule {
   @Inject()
-  private yupSchemaGeneratorService: YupSchemaGeneratorService;
+  private yupService: YupService;
+
+  @Inject()
+  private exceptionsService: ExceptionsService;
 
   async onModuleInit() {
-    this.generateYupSchema();
-  }
+    const frontendMicroservicePath = '../../microservices/frontend-web';
 
-  async generateYupSchema() {
-    await this.yupSchemaGeneratorService.init();
+    await this.yupService.generateSchema({
+      fileName: 'schema.ts',
+      writePath: [`${frontendMicroservicePath}/src/yup`],
+    });
 
-    await this.yupSchemaGeneratorService.generateSchema();
+    await this.exceptionsService.extract({
+      exceptionsPath: './**/*.exception.ts',
 
-    await this.yupSchemaGeneratorService.writeSchema();
+      fileName: 'exceptions.i18n.json',
+      writePath: [`${frontendMicroservicePath}/src/i18n`],
+    });
   }
 }

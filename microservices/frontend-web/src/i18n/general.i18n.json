@@ -5,5 +5,7 @@
   "password": "Password",
   "username": "Username",
 
-  "usernameOrEmail": "Username or e-mail"
+  "usernameOrEmail": "Username or e-mail",
+
+  "welcome": "Welcome"
 }

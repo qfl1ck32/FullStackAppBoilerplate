@@ -32,7 +32,7 @@ export const LoginComponent: React.FC<ILoginComponentProps> = ({onSubmit}) => {
           alignItems="center"
         >
           <Avatar bg="teal.500" />
-          <Heading color="teal.400">Welcome</Heading>
+          <Heading color="teal.400">{t("general.welcome")}</Heading>
           <Box minW={{ base: '90%', md: '468px' }}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack
@@ -51,6 +51,7 @@ export const LoginComponent: React.FC<ILoginComponentProps> = ({onSubmit}) => {
                      placeholder={t("general.usernameOrEmail")} />
                   </InputGroup>
                 </FormControl>
+              <h5>{getErrorMessage("usernameOrEmail")}</h5>
                 <FormControl>
                   <InputGroup>
                     <InputLeftElement
@@ -73,6 +74,7 @@ export const LoginComponent: React.FC<ILoginComponentProps> = ({onSubmit}) => {
                     <Link>{t("auth.forgotPassword")}</Link>
                   </FormHelperText>
                 </FormControl>
+              <h5>{getErrorMessage("password")}</h5>  
                 <Button
                   borderRadius={0}
                   type="submit"

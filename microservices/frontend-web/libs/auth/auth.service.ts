@@ -22,7 +22,6 @@ export class AuthService extends StateService<AuthServiceState, any> {
   constructor(
     @Inject() protected readonly authTokenService: AuthTokenService,
     @Inject() protected readonly apolloClient: ApolloClient,
-    @Inject() protected readonly notificationService: NotificationService,
   ) {
     super();
 
@@ -44,16 +43,12 @@ export class AuthService extends StateService<AuthServiceState, any> {
       },
     });
 
-    if (response.errors) {
-      return this.notificationService.show('Whoops?');
-    }
-
     const { accessToken, refreshToken } = response.data.login;
 
     this.authTokenService.accessToken = accessToken;
     this.authTokenService.refreshToken = refreshToken;
 
-    console.log(response.data.login);
+    return true;
   }
 
   public async register(input: RegisterUserInput) {
@@ -66,14 +61,5 @@ export class AuthService extends StateService<AuthServiceState, any> {
         input,
       },
     });
-
-    if (response.errors) {
-      console.log('ehe');
-      return this.notificationService.show('Ehey rip');
-    }
-
-    console.log('??');
-
-    this.notificationService.show('Bravo vere ai cont!!');
   }
 }
