@@ -62,6 +62,13 @@ export class AppModule {
   async onModuleInit() {
     const frontendMicroservicePath = '../../microservices/frontend-web';
 
+    await this.exceptionsService.extract({
+      exceptionsPath: './**/*.exception.ts',
+
+      fileName: 'exceptions.i18n.json',
+      writePath: [`${frontendMicroservicePath}/src/i18n`],
+    });
+
     await this.i18nService.updateTranslations({
       missingKey: 'MISSING_KEY',
       interpolation: {
@@ -76,16 +83,9 @@ export class AppModule {
       i18nFilesRegex: `${frontendMicroservicePath}/**/*.i18n.json`,
     });
 
-    // await this.yupService.generateSchema({
-    //   fileName: 'schema.ts',
-    //   writePath: [`${frontendMicroservicePath}/src/yup`],
-    // });
-
-    // await this.exceptionsService.extract({
-    //   exceptionsPath: './**/*.exception.ts',
-
-    //   fileName: 'exceptions.i18n.json',
-    //   writePath: [`${frontendMicroservicePath}/src/i18n`],
-    // });
+    await this.yupService.generateSchema({
+      fileName: 'schema.ts',
+      writePath: [`${frontendMicroservicePath}/src/yup`],
+    });
   }
 }

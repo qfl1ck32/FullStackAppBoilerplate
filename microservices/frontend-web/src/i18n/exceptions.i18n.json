@@ -3,7 +3,6 @@
   "INVALID_JWT": "Invalid jwt",
   "USER_NOT_FOUND": "User not found",
   "WRONG_PASSWORD": "Wrong password",
-  "FILE_NAME_MISSING": "File name missing",
   "USER_NOT_AUTHORIZED": "User not authorized",
   "USER_ALREADY_EXISTS": "User already exists"
 }

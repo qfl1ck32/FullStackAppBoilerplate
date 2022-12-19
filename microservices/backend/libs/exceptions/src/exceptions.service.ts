@@ -33,6 +33,10 @@ export class ExceptionsService extends Writer {
         'export class (.*) extends Exception {',
       );
 
+      const shouldHide = fileContent.indexOf('// @hide-on-ui') !== -1;
+
+      if (shouldHide) continue;
+
       const customCodeRegex = new RegExp("getCode[(][)] {\n    return '(.*)';");
 
       const className = classNameRegex.exec(fileContent)?.[1];
