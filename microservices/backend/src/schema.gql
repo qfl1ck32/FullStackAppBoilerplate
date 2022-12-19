@@ -24,11 +24,13 @@ type User {
 enum Role {
   admin
   end_user
+  hacker
 }
 
 enum Language {
   ro
   en
+  de
 }
 
 """

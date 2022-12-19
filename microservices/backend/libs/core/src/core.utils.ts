@@ -9,3 +9,16 @@ export const replaceEnumAtRuntime = (previousEnum: any, newEnum: any) => {
     previousEnum[key] = newEnum[key];
   });
 };
+
+/**
+ *
+ * @param value The value that should be an array
+ * @returns The value as an array
+ */
+export const makeArray = <T>(value: T | T[]): T[] => {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  return [value];
+};

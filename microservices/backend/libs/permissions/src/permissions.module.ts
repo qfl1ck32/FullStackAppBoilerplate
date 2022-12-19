@@ -1,13 +1,12 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 
 import { ProvideCollection } from '@app/collections/collections.provider';
+import { replaceEnumAtRuntime } from '@app/core/core.utils';
 import { registerEnumType } from '@app/graphql/defs';
 
 import { PermissionsModuleForRootArgs, Role } from './defs';
 import { PermissionEntity } from './permissions';
 import { PermissionsService } from './permissions.service';
-
-import { replaceEnumAtRuntime } from 'libs/core/core.utils';
 
 @Global()
 @Module({})

@@ -7,7 +7,7 @@ import { DatabaseModule } from '@app/database';
 import { ExceptionsModule } from '@app/exceptions';
 import { ExceptionsService } from '@app/exceptions/exceptions.service';
 import { GraphQLModule } from '@app/graphql';
-import { I18nModule } from '@app/i18n';
+import { I18nModule, I18nService } from '@app/i18n';
 import { LoggerModule } from '@app/logger';
 import { PermissionsModule } from '@app/permissions';
 import { StripeModule } from '@app/stripe';
@@ -56,19 +56,36 @@ export class AppModule {
   @Inject()
   private exceptionsService: ExceptionsService;
 
+  @Inject()
+  private i18nService: I18nService;
+
   async onModuleInit() {
     const frontendMicroservicePath = '../../microservices/frontend-web';
 
-    await this.yupService.generateSchema({
-      fileName: 'schema.ts',
-      writePath: [`${frontendMicroservicePath}/src/yup`],
+    await this.i18nService.updateTranslations({
+      missingKey: 'MISSING_KEY',
+      interpolation: {
+        start: '{{ ',
+        end: ' }}',
+      },
+
+      defaultLanguage: Language.en,
+
+      writePath: `${frontendMicroservicePath}/libs/i18n/translations`,
+
+      i18nFilesRegex: `${frontendMicroservicePath}/**/*.i18n.json`,
     });
 
-    await this.exceptionsService.extract({
-      exceptionsPath: './**/*.exception.ts',
+    // await this.yupService.generateSchema({
+    //   fileName: 'schema.ts',
+    //   writePath: [`${frontendMicroservicePath}/src/yup`],
+    // });
 
-      fileName: 'exceptions.i18n.json',
-      writePath: [`${frontendMicroservicePath}/src/i18n`],
-    });
+    // await this.exceptionsService.extract({
+    //   exceptionsPath: './**/*.exception.ts',
+
+    //   fileName: 'exceptions.i18n.json',
+    //   writePath: [`${frontendMicroservicePath}/src/i18n`],
+    // });
   }
 }

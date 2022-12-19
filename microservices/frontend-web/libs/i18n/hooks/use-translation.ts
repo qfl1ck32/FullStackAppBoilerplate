@@ -1,13 +1,7 @@
 import { use } from '@libs/di/hooks/use';
 import Polyglot from 'node-polyglot';
 
-import {
-  AllPhrases,
-  AllPhrasesPrefixes,
-  ExtractInterpolationStringsFromTranslation,
-  InterpolationKeys,
-  Phrase,
-} from '../defs';
+import { AllPhrasesPrefixes, InterpolationKeys, Phrase } from '../defs';
 import { I18NService } from '../i18n.service';
 
 export const useTranslation = <
