@@ -30,8 +30,8 @@ export class I18NService {
         phrases: [],
 
         interpolation: {
-          prefix: '{{',
-          suffix: '}}',
+          prefix: '{{ ',
+          suffix: ' }}',
         },
       });
 

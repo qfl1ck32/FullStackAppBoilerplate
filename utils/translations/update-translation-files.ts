@@ -3,9 +3,29 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import glob from 'glob';
 import { resolve } from 'path';
 
-const { languages, defaultLanguage, MISSING_KEY, dirPath } = constants;
+const { languages, interpolation, defaultLanguage, MISSING_KEY, dirPath } =
+  constants;
 
 console.info('Generating the translation files...');
+
+const interpolationRegex = new RegExp(
+  `${interpolation.start}(.*?)${interpolation.end}`,
+  'g',
+);
+
+const extractInterpolationArgs = (value: string) => {
+  const args = [] as string[];
+
+  const matches = value.matchAll(interpolationRegex);
+
+  for (const match of matches) {
+    const arg = match[1].trim();
+
+    args.push(arg);
+  }
+
+  return args;
+};
 
 const removeKeys = (object: Record<string, any>) => {
   for (const [key, value] of Object.entries(object)) {
@@ -16,6 +36,12 @@ const removeKeys = (object: Record<string, any>) => {
     }
 
     object[key] = MISSING_KEY;
+
+    const interpArgs = extractInterpolationArgs(value);
+
+    if (interpArgs.length) {
+      object[key] += ` [${interpArgs.join(', ')}]`;
+    }
   }
 };
 
@@ -124,6 +150,17 @@ const main = async () => {
       JSON.stringify(results[language], null, 2),
     );
   }
+
+  const types = `export type Translations = ${JSON.stringify(
+    results[defaultLanguage],
+    null,
+    2,
+  )}`;
+
+  writeFileSync(
+    resolve(dirPath, `./translations/${defaultLanguage}.ts`),
+    types,
+  );
 
   console.log('Done.');
 };

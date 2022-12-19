@@ -1,4 +1,4 @@
-{
+export type Translations = {
   "auth": {
     "register": "Register",
     "login": "Login",

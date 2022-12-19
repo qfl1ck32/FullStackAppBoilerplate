@@ -7,5 +7,7 @@
   "doNotHaveAnAccountYet": "Don't have an account?",
 
   "show": "Show",
-  "hide": "Hide"
+  "hide": "Hide",
+
+  "welcome": "Welcome, {{ name }}!"
 }

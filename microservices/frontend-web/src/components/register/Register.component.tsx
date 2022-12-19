@@ -15,25 +15,21 @@ import {
   Stack,
   chakra,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaLock, FaUserAlt } from 'react-icons/fa';
 
 import { useForm } from '@hooks/useForm/useForm.hook';
-import { OnSubmitFunction } from '@hooks/useForm/defs';
 import { getRegisterUserInputSchema } from '@root/yup/schema';
 import { useTranslation } from '@libs/i18n/hooks/use-translation';
+import { IRegisterComponentProps } from './defs';
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
-export interface IRegisterComponentProps {
-  onSubmit: OnSubmitFunction<typeof getRegisterUserInputSchema>
-}
-
 export const RegisterComponent: React.FC<IRegisterComponentProps> = ({onSubmit}) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleShowClick = () => setShowPassword((p) => !p);
+  const handleShowClick = useCallback(() => setShowPassword((p) => !p), [])
 
   const { register, handleSubmit, getErrorMessage } = useForm({
     schema: getRegisterUserInputSchema(),
@@ -139,7 +135,7 @@ export const RegisterComponent: React.FC<IRegisterComponentProps> = ({onSubmit})
       </Stack>
       <Box>
         {t("auth.alreadyHaveAnAccount")}
-        <Link color="teal.500" href="#">
+        <Link color="teal.500" href="/login">
           {t("auth.login")}
         </Link>
       </Box>

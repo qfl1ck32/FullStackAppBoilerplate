@@ -6,13 +6,15 @@
     "alreadyHaveAnAccount": "Ai deja un cont?",
     "doNotHaveAnAccountYet": "Nu ai un cont?",
     "show": "Arată",
-    "hide": "Ascunde"
+    "hide": "Ascunde",
+    "welcome": "Bun venit, {{ name }}!"
   },
   "general": {
     "firstName": "Nume",
     "lastName": "Prenume",
     "email": "E-mail",
     "password": "Parolă",
-    "username": "Username"
+    "username": "Username",
+    "usernameOrEmail": "Username sau e-mail"
   }
 }

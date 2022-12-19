@@ -1,15 +1,51 @@
-import { Join, NestedPaths } from '@libs/core/defs';
+import {
+  Join,
+  NestedPaths,
+  NestedPathsObjectUntilLeaf,
+  NestedPathsObjectsJustLeaf,
+} from '@libs/core/defs';
 
 import { Language } from '@root/gql/operations';
 
-import * as translations from './translations/en.json';
+import { Translations } from './translations/en';
+
+export type InterpolationStrings = {
+  start: '{{ ';
+  end: ' }}';
+};
 
 export type I18NMessages = {
   [key: string]: string | I18NMessages;
 };
 
-// TODO: remove the last one in NestedPaths<...>
-export type AllPhrases = Join<NestedPaths<typeof translations, []>, '.'>;
+export type AllPhrases = Join<
+  NestedPathsObjectsJustLeaf<Translations, []>,
+  '.'
+>;
+
+export type AllPhrasesPrefixes = Join<
+  NestedPathsObjectUntilLeaf<Translations, []>,
+  '.'
+>;
+
+export type ExtractInterpolation<T extends string> =
+  T extends `${infer A}${InterpolationStrings['start']}${infer B}${InterpolationStrings['end']}${infer C}`
+    ? ExtractInterpolation<A> | B | ExtractInterpolation<C>
+    : never;
+
+export type ExtractInterpolationStringsFromTranslation<
+  T extends AllPhrases,
+  // @ts-ignore
+> = ExtractInterpolation<GetDeep<Translations, T>>;
+
+export type InterpolationKeys<
+  Prefix extends AllPhrasesPrefixes | undefined = undefined,
+  P = Phrase<Prefix>,
+> = Prefix extends undefined
+  ? // @ts-ignore
+    ExtractInterpolationStringsFromTranslation<P>
+  : // @ts-ignore
+    ExtractInterpolationStringsFromTranslation<Join<[Prefix, P], '.'>>;
 
 export type GetDeep<
   T extends Record<string, any>,
@@ -21,13 +57,16 @@ export type GetDeep<
     GetDeep<T[A], B>
   : any;
 
-export type Phrase<T extends AllPhrases = any> = Join<
-  NestedPaths<
-    T extends any ? typeof translations : GetDeep<typeof translations, T>,
-    []
-  >,
-  '.'
->;
+export type Phrase<T extends AllPhrasesPrefixes | undefined> =
+  T extends undefined
+    ? AllPhrases
+    : Join<
+        NestedPaths<
+          T extends AllPhrasesPrefixes ? GetDeep<Translations, T> : any,
+          []
+        >,
+        '.'
+      >;
 
 declare module '@libs/session/defs' {
   export interface ISessionStorage {

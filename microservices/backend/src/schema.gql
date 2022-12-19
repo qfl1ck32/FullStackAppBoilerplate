@@ -43,14 +43,9 @@ type LoginUserResponse {
   refreshToken: String!
 }
 
-type TranslatableField {
-  en: String
-  ro: String
-}
-
 type Todo {
   _id: ID!
-  title: TranslatableField!
+  title: String!
   isCompleted: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!

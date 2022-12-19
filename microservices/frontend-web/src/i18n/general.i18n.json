@@ -3,5 +3,7 @@
   "lastName": "Last name",
   "email": "Email",
   "password": "Password",
-  "username": "Username"
+  "username": "Username",
+
+  "usernameOrEmail": "Username or e-mail"
 }

@@ -23,14 +23,14 @@ export function ProvideCollection<DBEntityType, EntityType>(
       collectionsStorage: CollectionsStorage,
       databaseService: DatabaseService,
       localEventManagerService: LocalEventManagerService,
-      eventManager: EventManagerService,
+      eventManagerService: EventManagerService,
     ) => {
       const collection = new Collection(
         entities,
         collectionsStorage,
         databaseService,
         localEventManagerService,
-        eventManager,
+        eventManagerService,
       );
 
       collectionsStorage.add(collection);

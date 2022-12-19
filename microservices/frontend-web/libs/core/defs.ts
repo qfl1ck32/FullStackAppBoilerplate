@@ -8,6 +8,36 @@ export type Decorator = (
   descriptor: PropertyDescriptor,
 ) => PropertyDescriptor | void;
 
+export declare type NestedPathsObjectUntilLeaf<
+  Type extends Record<string, any>,
+  Depth extends number[],
+> = Depth['length'] extends 8
+  ? []
+  : Type extends Record<string, string>
+  ? []
+  : Type extends string
+  ? []
+  : {
+      [Key in keyof Type]: [
+        Key,
+        ...NestedPathsObjectUntilLeaf<Type[Key], [...Depth, 1]>,
+      ];
+    }[keyof Type];
+
+export declare type NestedPathsObjectsJustLeaf<
+  Type extends Record<string, any>,
+  Depth extends number[],
+> = Depth['length'] extends 8
+  ? []
+  : Type extends string
+  ? []
+  : {
+      [Key in keyof Type]: [
+        Key,
+        ...NestedPathsObjectsJustLeaf<Type[Key], [...Depth, 1]>,
+      ];
+    }[keyof Type];
+
 export declare type Join<T extends unknown[], D extends string> = T extends []
   ? ''
   : T extends [string | number]

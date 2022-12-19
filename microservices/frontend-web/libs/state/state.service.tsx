@@ -1,7 +1,4 @@
-import { Constructor } from '@libs/core/defs';
 import { Injectable } from '@libs/di/decorators';
-import { use } from '@libs/di/hooks/use';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Subscriber } from './defs';
 
@@ -26,6 +23,8 @@ export class StateService<State extends {} = any, Config extends {} = any> {
   }
 
   public updateState(state: Partial<State>) {
+    // TODO: deep?
+
     this.setState({
       ...this.state,
       ...state,
