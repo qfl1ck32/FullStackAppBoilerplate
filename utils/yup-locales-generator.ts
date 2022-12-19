@@ -1,14 +1,14 @@
-import constants from './constants';
 import { execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
+
+// TODO: update
+const dirPath = './yup-locales';
 
 export interface TranslateOptions {
   from: string;
   to: string;
 }
-
-const { dirPath } = constants;
 
 const main = async () => {
   const locale = process.argv[2];
