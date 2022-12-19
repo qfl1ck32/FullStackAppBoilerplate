@@ -2,14 +2,14 @@ import { use } from '@libs/di/hooks/use';
 import Polyglot from 'node-polyglot';
 
 import { AllPhrasesPrefixes, InterpolationKeys, Phrase } from '../defs';
-import { I18NService } from '../i18n.service';
+import { I18nService } from '../i18n.service';
 
 export const useTranslation = <
   T extends AllPhrasesPrefixes | undefined = undefined,
 >(
   prefix?: T,
 ) => {
-  const service = use(I18NService);
+  const service = use(I18nService);
 
   const t = <P extends Phrase<T>>(
     // @ts-ignore

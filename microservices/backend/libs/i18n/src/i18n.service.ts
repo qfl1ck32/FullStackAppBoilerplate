@@ -74,7 +74,7 @@ export class I18nService extends Writer {
       const interpArgs = this.extractInterpolationArgs(value);
 
       if (interpArgs.length) {
-        object[key] += ` [${interpArgs.join(', ')}]`;
+        object[key] += ` ${interpArgs.map((arg) => `{{ ${arg} }}`).join(', ')}`;
       }
     }
   }

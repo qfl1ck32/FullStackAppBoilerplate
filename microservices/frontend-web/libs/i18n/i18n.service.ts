@@ -1,3 +1,4 @@
+import { ApolloError } from '@apollo/client';
 import { dayjs } from '@libs/dayjs/day-js.service';
 import { Injectable } from '@libs/di/decorators';
 import { yup } from '@libs/yup/yup.service';
@@ -5,12 +6,12 @@ import Polyglot from 'node-polyglot';
 
 import { Language } from '@root/gql/operations';
 
-import { Phrase } from './defs';
+import { AllPhrases, Phrase } from './defs';
 import translations from './translations/en.json';
 import * as yupLocale from './yup';
 
 @Injectable()
-export class I18NService {
+export class I18nService {
   private polyglots: Map<Language, Polyglot>;
 
   private defaultLocale: Language;
@@ -50,8 +51,16 @@ export class I18NService {
     dayjs.locale(language);
   }
 
-  public t<T extends keyof typeof translations>(
-    phrase: Phrase<T>,
+  public translateError(error: ApolloError) {
+    const gqlError = error.graphQLErrors?.[0];
+
+    if (!gqlError) return;
+
+    return this.t(`exceptions.${gqlError.code}` as any, gqlError.metadata);
+  }
+
+  public t<T extends AllPhrases>(
+    phrase: T,
     options?: number | Polyglot.InterpolationOptions | undefined,
   ) {
     return this.activePolyglot.t(phrase, options);

@@ -38,7 +38,7 @@ export const RegisterComponent: React.FC<IRegisterComponentProps> = ({onSubmit})
   });
 
   const t = useTranslation()
-
+  
   return (
     <Flex className={styles.container}>
       <Stack

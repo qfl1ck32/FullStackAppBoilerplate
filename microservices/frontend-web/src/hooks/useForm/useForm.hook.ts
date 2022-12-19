@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { use } from '@libs/di/hooks/use';
-import { I18NService } from '@libs/i18n/i18n.service';
+import { I18nService } from '@libs/i18n/i18n.service';
 import { useEffect } from 'react';
 import { FieldValues, useForm as baseUseForm } from 'react-hook-form';
 
@@ -13,7 +13,7 @@ export function useForm<
 >(props: UseFormProps<TFieldValues, YupSchemaType, TContext>) {
   const { schema, ...rest } = props;
 
-  const i18nService = use(I18NService);
+  const i18nService = use(I18nService);
 
   const form = baseUseForm<OnSubmitValues<typeof schema>>({
     ...rest,

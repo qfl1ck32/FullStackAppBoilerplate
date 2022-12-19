@@ -65,7 +65,9 @@ export class AuthService {
     const user = await this.usersService.findByUsernameOrEmail(usernameOrEmail);
 
     if (!user) {
-      throw new UserNotFoundException();
+      throw new UserNotFoundException({
+        usernameOrEmail,
+      });
     }
 
     const isPasswordOK = this.usersSecurityService.isPasswordCorrect(

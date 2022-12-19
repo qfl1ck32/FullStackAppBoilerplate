@@ -21,9 +21,9 @@ export type Translations = {
   exceptions: {
     EXPIRED_JWT: 'Expired jwt';
     INVALID_JWT: 'Invalid jwt';
-    USER_NOT_FOUND: 'User not found';
     WRONG_PASSWORD: 'Wrong password';
     USER_NOT_AUTHORIZED: 'User not authorized';
     USER_ALREADY_EXISTS: 'User already exists';
+    USER_NOT_FOUND: 'User not found {{ usernameOrEmail }}';
   };
 };

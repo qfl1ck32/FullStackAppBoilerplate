@@ -3,6 +3,7 @@ import { OnSubmitFunction } from "@hooks/useForm/defs"
 import { AuthService } from "@libs/auth/auth.service"
 import { use } from "@libs/di/hooks/use"
 import { useTranslation } from "@libs/i18n/hooks/use-translation"
+import { I18nService } from "@libs/i18n/i18n.service"
 import { useStateService } from "@libs/state/hooks/use-state-service"
 import { LoginComponent } from "@root/components/login/Login.component"
 import { NotificationService } from "@root/services/notification/notification.service"
@@ -11,6 +12,7 @@ import { useCallback } from "react"
 
 export const LoginContainer: React.FC = () => {
     const authService = useStateService(AuthService)
+    const i18nService = use(I18nService)
 
     const notificationService = use(NotificationService)
 
@@ -26,8 +28,9 @@ export const LoginContainer: React.FC = () => {
         }
 
         catch(err: any) {
-            console.log(err.graphQLErrors[0])
-            console.log(err)
+            const errorMessage = i18nService.translateError(err)
+
+            notificationService.show.error(errorMessage)
         }
     }, [])
 

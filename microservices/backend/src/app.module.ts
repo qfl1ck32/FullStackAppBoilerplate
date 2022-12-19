@@ -60,6 +60,8 @@ export class AppModule {
   private i18nService: I18nService;
 
   async onModuleInit() {
+    return;
+
     const frontendMicroservicePath = '../../microservices/frontend-web';
 
     await this.exceptionsService.extract({

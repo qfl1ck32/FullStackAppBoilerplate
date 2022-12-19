@@ -22,7 +22,10 @@ export class ExceptionsService extends Writer {
 
     super.initialise(args);
 
-    const codes = [] as string[];
+    const exceptions = [] as {
+      code: string;
+      metadata: string[];
+    }[];
 
     const matches = await glob(exceptionsPath);
 
@@ -30,8 +33,10 @@ export class ExceptionsService extends Writer {
       const fileContent = readFileSync(match, 'utf-8');
 
       const classNameRegex = new RegExp(
-        'export class (.*) extends Exception {',
+        'export class (.*) extends Exception(.*){',
       );
+
+      const metadataRegex = new RegExp('Exception<{(.*)}>', 'gs');
 
       const shouldHide = fileContent.indexOf('// @hide-on-ui') !== -1;
 
@@ -41,18 +46,40 @@ export class ExceptionsService extends Writer {
 
       const className = classNameRegex.exec(fileContent)?.[1];
       const code = customCodeRegex.exec(fileContent)?.[1];
+      const metadata = (metadataRegex.exec(fileContent)?.[1] || '')
+        .trim()
+        .split('\n')
+        .filter(Boolean)
+        .map((r) => r.trim())
+        .map((r) => {
+          return r.split(/([?][:])|([:])/)[0];
+        });
 
-      codes.push(code ?? this.getCode(className as string));
+      exceptions.push({
+        code: code ?? this.getCode(className as string),
+        metadata,
+      });
     }
 
     const content = `{
-          ${codes
-            .map((code) => {
+          ${exceptions
+            .map((exception) => {
+              const { code, metadata } = exception;
+
               const name = code
                 .split('_')
                 .map((subname) => subname.toLowerCase())
                 .join(' ');
-              return `"${code}": "${name[0].toUpperCase() + name.slice(1)}"`;
+
+              const finalName = name[0].toUpperCase() + name.slice(1);
+
+              const metadataString = metadata
+                .map((arg) => `{{ ${arg} }}`)
+                .join(' ');
+
+              return `"${code}": "${finalName}${
+                metadataString ? ` ${metadataString}` : ''
+              }"`;
             })
             .join(',\n\t')}
     }`;

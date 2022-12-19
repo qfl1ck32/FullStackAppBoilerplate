@@ -21,9 +21,9 @@
   "exceptions": {
     "EXPIRED_JWT": "Token-ul de autentificare a expirat.",
     "INVALID_JWT": "Token-ul de autentificare este invalid.",
-    "USER_NOT_FOUND": "User-ul nu a fost găsit.",
     "WRONG_PASSWORD": "Parola este incorectă.",
     "USER_NOT_AUTHORIZED": "Nu ești autorizat",
-    "USER_ALREADY_EXISTS": "User-ul deja există"
+    "USER_ALREADY_EXISTS": "User-ul deja există",
+    "USER_NOT_FOUND": "User-ul {{ usernameOrEmail }} nu a fost găsit"
   }
 }

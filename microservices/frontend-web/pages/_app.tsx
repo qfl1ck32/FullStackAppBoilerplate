@@ -7,12 +7,12 @@ import type { AppProps } from 'next/app';
 import { ToasterContainer } from '@root/containers/toaster/Toaster.container';
 
 import 'react-toastify/dist/ReactToastify.css';
-import { I18NService } from '@libs/i18n/i18n.service';
+import { I18nService } from '@libs/i18n/i18n.service';
 import { Language } from '@root/gql/operations';
 
 export default function App(props: AppProps) {
   const apolloClient = use(ApolloClient);
-  const i18nService = use(I18NService)
+  const i18nService = use(I18nService)
 
   // TODO: I'd somehow like to use the language from sessions, and only if it's not set, use the one from the router
   // const sessionService = use(SessionService)
