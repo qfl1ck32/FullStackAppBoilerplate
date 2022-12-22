@@ -9,5 +9,7 @@
   "show": "Show",
   "hide": "Hide",
 
-  "welcome": "Welcome, {{ name }}!"
+  "welcome": "Welcome, {{ name }}!",
+
+  "successfullyRegistered": "You have succesfully created your account. Check your e-mail for confirmation."
 }

@@ -8,6 +8,7 @@ export type Translations = {
     show: 'Show';
     hide: 'Hide';
     welcome: 'Welcome, {{ name }}!';
+    successfullyRegistered: 'You have succesfully created your account. Check your e-mail for confirmation.';
   };
   general: {
     firstName: 'First name';
@@ -22,8 +23,8 @@ export type Translations = {
     EXPIRED_JWT: 'Expired jwt';
     INVALID_JWT: 'Invalid jwt';
     WRONG_PASSWORD: 'Wrong password';
-    USER_NOT_AUTHORIZED: 'User not authorized';
-    USER_ALREADY_EXISTS: 'User already exists';
+    USER_NOT_AUTHORIZED: 'You are not authorized';
+    USER_ALREADY_EXISTS: 'The user already exists';
     USER_NOT_FOUND: 'The user {{ usernameOrEmail }} was not found';
   };
 };

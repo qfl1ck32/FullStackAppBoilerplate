@@ -7,7 +7,8 @@
     "doNotHaveAnAccountYet": "Nu ai un cont?",
     "show": "Arată",
     "hide": "Ascunde",
-    "welcome": "Bun venit, {{ name }}!"
+    "welcome": "Bun venit, {{ name }}!",
+    "successfullyRegistered": "Ți-ai creat contul cu success! Verifică e-mail-ul pentru confirmare."
   },
   "general": {
     "firstName": "Nume",
@@ -23,7 +24,7 @@
     "INVALID_JWT": "Token-ul de autentificare este invalid.",
     "WRONG_PASSWORD": "Parola este incorectă.",
     "USER_NOT_AUTHORIZED": "Nu ești autorizat",
-    "USER_ALREADY_EXISTS": "User-ul deja există",
+    "USER_ALREADY_EXISTS": "User-ul există deja",
     "USER_NOT_FOUND": "User-ul {{ usernameOrEmail }} nu a fost găsit"
   }
 }

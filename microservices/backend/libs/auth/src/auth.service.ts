@@ -117,6 +117,12 @@ export class AuthService {
     }
   }
 
+  public async getMe(userId: ObjectId) {
+    return this.usersService.collection.findOne({
+      _id: userId,
+    });
+  }
+
   public async generateAccessToken(userId: ObjectId) {
     const payload = {
       userId,

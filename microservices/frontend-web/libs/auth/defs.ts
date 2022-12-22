@@ -4,5 +4,5 @@ export interface AuthServiceState {
   isAuthenticated: boolean;
   isLoading: boolean;
 
-  user: User | undefined;
+  user: Partial<User> | undefined;
 }

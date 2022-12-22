@@ -22,9 +22,11 @@ export const LoginContainer: React.FC = () => {
         try {
             await authService.login(input)
 
-            t("welcome", {
-                name: authService.state.user!.fullName
-            })
+            console.log(authService.state.user)
+
+            notificationService.show.info(t("welcome", {
+                name: authService.state.user!.fullName as string
+            }))
         }
 
         catch(err: any) {

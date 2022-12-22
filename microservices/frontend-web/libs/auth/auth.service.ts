@@ -4,6 +4,9 @@ import { Inject, Injectable } from '@libs/di/decorators';
 import { StateService } from '@libs/state/state.service';
 
 import {
+  GetMeDocument,
+  GetMeQuery,
+  GetMeQueryVariables,
   LoginUserDocument,
   LoginUserInput,
   LoginUserMutation,
@@ -13,7 +16,6 @@ import {
   RegisterUserMutation,
   RegisterUserMutationVariables,
 } from '@root/gql/operations';
-import { NotificationService } from '@root/services/notification/notification.service';
 
 import { AuthServiceState } from './defs';
 
@@ -48,11 +50,13 @@ export class AuthService extends StateService<AuthServiceState, any> {
     this.authTokenService.accessToken = accessToken;
     this.authTokenService.refreshToken = refreshToken;
 
+    await this.getMe();
+
     return true;
   }
 
   public async register(input: RegisterUserInput) {
-    const response = await this.apolloClient.mutate<
+    await this.apolloClient.mutate<
       RegisterUserMutation,
       RegisterUserMutationVariables
     >({
@@ -60,6 +64,19 @@ export class AuthService extends StateService<AuthServiceState, any> {
       variables: {
         input,
       },
+    });
+  }
+
+  public async getMe() {
+    const { data } = await this.apolloClient.query<
+      GetMeQuery,
+      GetMeQueryVariables
+    >({
+      query: GetMeDocument,
+    });
+
+    this.updateState({
+      user: data.getMe,
     });
   }
 }

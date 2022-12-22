@@ -58,7 +58,7 @@ type Todo {
 type Query {
   framework: String!
   issueAccessToken(input: IssueAccessTokenInput!): String!
-  getUser: User!
+  getMe: User!
 }
 
 input IssueAccessTokenInput {

@@ -20,3 +20,11 @@ mutation CreateTodo($input: EndUsersTodosCreateInput!) {
     isCompleted
   }
 }
+
+query GetMe {
+  getMe {
+    _id
+    email
+    fullName
+  }
+}
