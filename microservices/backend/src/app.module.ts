@@ -62,8 +62,6 @@ export class AppModule {
   async onModuleInit() {
     // return;
 
-    // TODO: don't replace english translations! It makes no sense. I think.
-
     const frontendMicroservicePath = '../../microservices/frontend-web';
 
     await this.exceptionsService.extract({
