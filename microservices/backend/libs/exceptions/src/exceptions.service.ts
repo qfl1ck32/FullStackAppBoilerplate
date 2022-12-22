@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { mergeDeep } from '@app/core/core.utils';
 import { Writer } from '@app/core/models/writer';
 import { LoggerService } from '@app/logger';
 
@@ -18,7 +19,7 @@ export class ExceptionsService extends Writer {
   }
 
   async extract(args: ExtractArgs) {
-    const { exceptionsPath } = args;
+    const { exceptionsPath, fileName, writePath } = args;
 
     super.initialise(args);
 
@@ -61,7 +62,7 @@ export class ExceptionsService extends Writer {
       });
     }
 
-    const content = `{
+    const content = JSON.parse(`{
           ${exceptions
             .map((exception) => {
               const { code, metadata } = exception;
@@ -82,9 +83,20 @@ export class ExceptionsService extends Writer {
               }"`;
             })
             .join(',\n\t')}
-    }`;
+    }`);
 
-    super.write(content);
+    const existingExceptionsFile = readFileSync(`${writePath}/${fileName}`, {
+      encoding: 'utf-8',
+    });
+
+    if (existingExceptionsFile) {
+      await mergeDeep({
+        target: content,
+        sources: [JSON.parse(existingExceptionsFile)],
+      });
+    }
+
+    super.write(JSON.stringify(content));
 
     this.loggerService.info('Success');
   }

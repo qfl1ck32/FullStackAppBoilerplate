@@ -60,7 +60,9 @@ export class AppModule {
   private i18nService: I18nService;
 
   async onModuleInit() {
-    return;
+    // return;
+
+    // TODO: don't replace english translations! It makes no sense. I think.
 
     const frontendMicroservicePath = '../../microservices/frontend-web';
 

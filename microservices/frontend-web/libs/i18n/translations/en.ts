@@ -24,6 +24,6 @@ export type Translations = {
     WRONG_PASSWORD: 'Wrong password';
     USER_NOT_AUTHORIZED: 'User not authorized';
     USER_ALREADY_EXISTS: 'User already exists';
-    USER_NOT_FOUND: 'User not found {{ usernameOrEmail }}';
+    USER_NOT_FOUND: 'The user {{ usernameOrEmail }} was not found';
   };
 };

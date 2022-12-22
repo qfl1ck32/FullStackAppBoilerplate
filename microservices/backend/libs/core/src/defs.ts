@@ -9,3 +9,9 @@ export type Decorator = (
 ) => PropertyDescriptor | void;
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+export type ObjectAssignFunctionType = (
+  target: Record<string, any>,
+  source: Record<string, any>,
+  key: string,
+) => void;

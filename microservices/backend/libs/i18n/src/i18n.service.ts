@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { mergeDeep } from '@app/core/core.utils';
 import { Writer } from '@app/core/models/writer';
 import { LoggerService } from '@app/logger';
 
@@ -96,35 +97,16 @@ export class I18nService extends Writer {
     }
   }
 
-  private async mergeDeep(
-    target: Record<string, any>,
-    assignFunction: Function,
-    ...sources: Record<string, any>[]
-  ): Promise<any> {
-    if (!sources.length) return target;
-
-    const source = sources.shift();
-
-    if (target instanceof Object && source instanceof Object) {
-      for (const key in source) {
-        if (source[key] instanceof Object) {
-          if (!target[key]) Object.assign(target, { [key]: {} });
-          await this.mergeDeep(target[key], assignFunction, source[key]);
-        } else {
-          await assignFunction(target, source, key);
-        }
-      }
-    }
-
-    return this.mergeDeep(target, assignFunction, ...sources);
-  }
-
   async updateTranslations(args: UpdateTranslationsArgs) {
+    const { writePath } = args;
+
     super.initialise(args);
 
-    // if (args.writePath.length !== 1) {
-    //   throw new OneWritePathRequiredException();
-    // }
+    if (Array.isArray(writePath)) {
+      if (writePath.length > 1) {
+        throw new OneWritePathRequiredException();
+      }
+    }
 
     this.state = args;
 
@@ -169,18 +151,18 @@ export class I18nService extends Writer {
 
       resultPointer[name[name.length - 1]] = fileContent;
 
-      await this.mergeDeep(
-        fullTranslations,
-        this.assignFunctionEnglish,
-        result,
-      );
+      await mergeDeep({
+        target: fullTranslations,
+        assignFunction: this.assignFunctionEnglish,
+        sources: [result],
+      });
     }
 
-    const fullTranslationsNoKeys = await this.mergeDeep(
-      {},
-      this.assignFunctionEnglish,
-      fullTranslations,
-    );
+    const fullTranslationsNoKeys = await mergeDeep({
+      target: {},
+      assignFunction: this.assignFunctionEnglish,
+      sources: [fullTranslations],
+    });
 
     this.removeKeys(fullTranslationsNoKeys);
 
@@ -194,20 +176,18 @@ export class I18nService extends Writer {
         : fullTranslationsNoKeys;
 
       const assignFunction = isDefaultLanguage
-        ? // TODO: autobind?
-          this.assignFunctionEnglish.bind(this)
+        ? this.assignFunctionEnglish
         : this.assignFunctionOtherLanguages.bind(this);
 
       const result = {} as Record<string, any>;
 
       this.keepOnlyCurrentKeys(translations[language], currentFullTranslations);
 
-      await this.mergeDeep(
-        result,
+      await mergeDeep({
+        target: result,
         assignFunction,
-        translations[language],
-        currentFullTranslations,
-      );
+        sources: [translations[language], currentFullTranslations],
+      });
 
       results[language] = {};
 
